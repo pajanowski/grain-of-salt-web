@@ -28,10 +28,12 @@
     "@vitejs/plugin-react": "^4.6.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.1",
+    "fake-indexeddb": "^6.0.1",
     "jsdom": "^26.1.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "vitest-indexeddb": "^0.0.0"
   }
 }

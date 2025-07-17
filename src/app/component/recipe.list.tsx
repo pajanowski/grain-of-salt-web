@@ -1,6 +1,8 @@
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import {RecipeNode} from "@/app/model/recipe-node";
 import {RecipeService} from "@/app/service/recipe.service";
+import {useLiveQuery} from "dexie-react-hooks";
+import {NEAPOLITAN, NY_STYLE, PAPA_JOHNS} from "@/app/static-data";
 
 interface RecipeListProps {
     className?: string;
@@ -11,27 +13,18 @@ export interface RecipeListHandles {
 }
 
 const RecipeList = forwardRef<RecipeListHandles, RecipeListProps>((props: RecipeListProps, ref) => {
-    const [rootRecipes, setRootRecipes] = useState<RecipeNode[]>([]);
-    useImperativeHandle(ref, () => ({
-        refresh() {
-            console.log("hello from logFromRecipeNodeCard");
-            loadRootRecipes();
-        }
-    }));
+    // const [rootRecipes, setRootRecipes] = useState<RecipeNode[] | undefined>([]);
+    const rootRecipes = useLiveQuery(() => RecipeService.getRootRecipes());
 
-    function loadRootRecipes() {
-        RecipeService.getRootRecipes()
-            .then(setRootRecipes)
-            .catch((err) => {
-                console.error("An error occurred fetch root recipes", err)
-            });
-    }
+    if (!rootRecipes) return null;
 
-    useEffect(() => {
-        loadRootRecipes();
-    }, [])
     return (
         <div className={`bg-gray-300 h-full ${props.className}`}>
+            <button onClick={() => {
+                RecipeService.saveRecipeNode(NEAPOLITAN);
+                RecipeService.saveRecipeNode(NY_STYLE);
+                RecipeService.saveRecipeNode(PAPA_JOHNS);
+            }}>Load data</button>
             {rootRecipes.length > 0 && rootRecipes.map((recipe) => {
                 return (<div key={recipe.id}>
                     {recipe.name}

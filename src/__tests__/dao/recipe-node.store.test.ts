@@ -1,44 +1,59 @@
 import {expect, test } from 'vitest'
 import {RecipeNodeStore} from "@/app/dao/recipe-node.store";
 import {NEAPOLITAN, NY_STYLE, PAPA_JOHNS} from "@/app/static-data";
+import "fake-indexeddb/auto";
+import {RecipeNode} from "@/app/model/recipe-node";
 
-test('RecipeNodeStore should return an empty recipe node', () => {
-  const actual = RecipeNodeStore.getRootRecipes();
-  expect(actual).toStrictEqual(new Set())
+test('RecipeNodeStore should return an empty recipe node', async () => {
+  const actual = await RecipeNodeStore.getRootRecipes();
+  expect(actual).toStrictEqual([])
 })
 
-test('RecipeNodeStore should return recipe nodes after they are put in there', () => {
+test('RecipeNodeStore should return recipe nodes after they are put in there', async () => {
   nonBranchingPizzaSetup();
 
-  const rootRecipeIds = RecipeNodeStore.getRootRecipes();
-  expect(rootRecipeIds).toContain(NEAPOLITAN.id)
-  expect(rootRecipeIds).to.not.contain(NY_STYLE.id);
-  expect(rootRecipeIds).to.not.contain(PAPA_JOHNS.id);
-
+  const rootRecipes: RecipeNode[] = await RecipeNodeStore.getRootRecipes();
+  expect(rootRecipes.length).to.eq(1);
+  expect(rootRecipes[0]).toEqual(NEAPOLITAN);
 });
 
-test('RecipeNodeStore should return only recipe nodes asked for', () => {
+test('RecipeNodeStore should return only recipe nodes asked for', async () => {
   nonBranchingPizzaSetup();
 
-  expect(RecipeNodeStore.getRecipeNodeById("asdf")).to.equal(undefined);
-  expect(RecipeNodeStore.getRecipeNodeById(NEAPOLITAN.id)).to.equal(NEAPOLITAN);
-  expect(RecipeNodeStore.getRecipeNodeById(NY_STYLE.id)).to.equal(NY_STYLE);
-  expect(RecipeNodeStore.getRecipeNodeById(PAPA_JOHNS.id)).to.equal(PAPA_JOHNS);
+  expect(await RecipeNodeStore.getRecipeNodeById("asdf")).to.equal(undefined);
+  expect(await RecipeNodeStore.getRecipeNodeById(NEAPOLITAN.id)).toEqual(NEAPOLITAN);
+  expect(await RecipeNodeStore.getRecipeNodeById(NY_STYLE.id)).toEqual(NY_STYLE);
+  expect(await RecipeNodeStore.getRecipeNodeById(PAPA_JOHNS.id)).toEqual(PAPA_JOHNS);
 });
 
-test('RecipeNodeStore should only return the ancestors of nodes when asked for', () => {
+test('RecipeNodeStore should only return the ancestors of nodes when asked for', async () => {
   nonBranchingPizzaSetup();
 
-  expect(RecipeNodeStore.getRecipeAncestors("asdf")).toStrictEqual([]);
-  expect(RecipeNodeStore.getRecipeAncestors(NEAPOLITAN.id)).toStrictEqual([NEAPOLITAN]);
-  expect(RecipeNodeStore.getRecipeAncestors(NY_STYLE.id)).toStrictEqual([NY_STYLE, NEAPOLITAN]);
-  expect(RecipeNodeStore.getRecipeAncestors(PAPA_JOHNS.id)).toStrictEqual([PAPA_JOHNS, NY_STYLE, NEAPOLITAN]);
+  expect(await RecipeNodeStore.getRecipeAncestors("asdf")).toEqual([]);
+  expect(await RecipeNodeStore.getRecipeAncestors(NEAPOLITAN.id)).toEqual([NEAPOLITAN]);
+  expect(await RecipeNodeStore.getRecipeAncestors(NY_STYLE.id)).toEqual([NY_STYLE, NEAPOLITAN]);
+  expect(await RecipeNodeStore.getRecipeAncestors(PAPA_JOHNS.id)).toEqual([PAPA_JOHNS, NY_STYLE, NEAPOLITAN]);
+});
+
+test('RecipeNodeStore should delete child and children from recipe', async () => {
+    nonBranchingPizzaSetup();
+
+    await RecipeNodeStore.deleteRecipeAndChildren(NY_STYLE.id);
+
+    const papaJohnsRecipeNode = await RecipeNodeStore.getRecipeNodeById(PAPA_JOHNS.id);
+    expect(papaJohnsRecipeNode).toEqual(undefined);
+
+    const nyStyleRecipeNode = await RecipeNodeStore.getRecipeNodeById(NY_STYLE.id);
+    expect(nyStyleRecipeNode).toEqual(undefined);
+
+    const neapolitanRecipeNode = await RecipeNodeStore.getRecipeNodeById(NEAPOLITAN.id);
+    expect(neapolitanRecipeNode).toEqual(NEAPOLITAN);
 })
 
 const nonBranchingPizzaSetup = () => {
   const parentId = NEAPOLITAN.id;
   const parentNode = NEAPOLITAN;
-  RecipeNodeStore.addRootRecipeNode(parentNode);
+  RecipeNodeStore.addRecipeNode(parentNode);
 
   const child1Id = NY_STYLE.id;
   const child1Node = NY_STYLE;
