@@ -1,22 +1,16 @@
 import {expect, test } from 'vitest'
 import {RecipeNodeStore} from "@/app/dao/recipe-node.store";
-import {RecipeNode} from "@/app/model/recipe-node";
-import {v4 as uuid} from 'uuid';
-import {root} from "postcss";
-
-const NEAPOLITAN = new RecipeNode(uuid(), null, "Neapolitan", ["Flour", "Water", "Salt", "Yeast"], ["Mix it all together"])
-const NY_STYLE = new RecipeNode(uuid(), NEAPOLITAN.id, "Ny Style", ["Olive Oil"], ["Roll it out way bigger"])
-const PAPA_JOHNS = new RecipeNode(uuid(), NY_STYLE.id, "Papa Johns Style", ["Add a lot of sugar"], ["Mix the sugar in"]);
+import {NEAPOLITAN, NY_STYLE, PAPA_JOHNS} from "@/app/static-data";
 
 test('RecipeNodeStore should return an empty recipe node', () => {
-  const actual = RecipeNodeStore.getRootRecipeIds();
+  const actual = RecipeNodeStore.getRootRecipes();
   expect(actual).toStrictEqual(new Set())
 })
 
 test('RecipeNodeStore should return recipe nodes after they are put in there', () => {
   nonBranchingPizzaSetup();
 
-  const rootRecipeIds = RecipeNodeStore.getRootRecipeIds();
+  const rootRecipeIds = RecipeNodeStore.getRootRecipes();
   expect(rootRecipeIds).toContain(NEAPOLITAN.id)
   expect(rootRecipeIds).to.not.contain(NY_STYLE.id);
   expect(rootRecipeIds).to.not.contain(PAPA_JOHNS.id);

@@ -1,36 +1,44 @@
 import {RecipeNode} from "@/app/model/recipe-node";
-import recipeNodeCard from "@/app/component/recipe-node.card";
+import Dexie, {EntityTable} from "dexie";
+
+const recipeIdToNodeDb = new Dexie('recipe_id_to_node') as Dexie & {
+    recipeNodes: EntityTable<
+        RecipeNode,
+        'id'
+    >;
+};
+
+recipeIdToNodeDb.version(1).stores({
+    recipeNodes: '++id, parentId, name, ingredients, directions'
+})
 
 export class RecipeNodeStore {
-  private static recipeIdToNode: Map<string, RecipeNode> = new Map();
-  private static rootRecipeIds: Set<string> = new Set();
-
-  static getRootRecipeIds(): Set<string> {
-    return this.rootRecipeIds;
-  }
-
-  static addRootRecipeNode(recipeNode: RecipeNode) {
-    this.rootRecipeIds.add(recipeNode.id);
-    this.recipeIdToNode.set(recipeNode.id, recipeNode);
-  }
-
-  static addRecipeNode(recipeNode: RecipeNode) {
-    this.recipeIdToNode.set(recipeNode.id, recipeNode);
-  }
-
-  static getRecipeNodeById(id: string): RecipeNode | undefined {
-    return this.recipeIdToNode.get(id);
-  }
-
-  static getRecipeAncestors(id: string): RecipeNode[] {
-    let curId: string | null = id;
-    const ret: RecipeNode[] = [];
-    while(curId && this.recipeIdToNode.has(curId)) {
-      const nextRecipeNode: RecipeNode = this.recipeIdToNode.get(curId)!;
-      ret.push(nextRecipeNode);
-      curId = nextRecipeNode.parentId;
+    static getRootRecipes(): Promise<Array<RecipeNode>> {
+        return recipeIdToNodeDb.recipeNodes.where({parentId: null}).toArray();
     }
-    return ret;
-  }
+
+    static addRecipeNode(recipeNode: RecipeNode): Promise<string> {
+        return recipeIdToNodeDb.recipeNodes.add(recipeNode);
+    }
+
+    static getRecipeNodeById(id: string): Promise<RecipeNode | undefined> {
+        return recipeIdToNodeDb.recipeNodes.get(id);
+    }
+
+    static async getRecipeAncestors(id: string): Promise<RecipeNode[]> {
+        let curId: string | null = id;
+        const ret: RecipeNode[] = [];
+        recipeIdToNodeDb.recipeNodes.where({id: curId}).first();
+        let nextRecipeNode: RecipeNode | undefined = await recipeIdToNodeDb.recipeNodes.where({id: curId}).first();
+        while (nextRecipeNode) {
+            ret.push(nextRecipeNode);
+            curId = nextRecipeNode.parentId;
+            if (curId === undefined) {
+                break
+            }
+            nextRecipeNode = await recipeIdToNodeDb.recipeNodes.where({id: curId}).first();
+        }
+        return ret;
+    }
 
 }

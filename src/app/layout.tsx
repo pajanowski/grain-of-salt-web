@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import {RecipeService} from "@/app/service/recipe.service";
+import {NEAPOLITAN, NY_STYLE, PAPA_JOHNS} from "@/app/static-data";
+import {useMemo} from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,6 +25,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+    useMemo(() => {
+       loadTestData();
+    }, []);
   return (
     <html lang="en">
       <body
@@ -31,4 +37,10 @@ export default function RootLayout({
       </body>
     </html>
   );
+}
+
+const loadTestData = () => {
+    RecipeService.saveRootRecipe(NEAPOLITAN);
+    RecipeService.saveRecipeNode(NY_STYLE);
+    RecipeService.saveRecipeNode(PAPA_JOHNS);
 }
