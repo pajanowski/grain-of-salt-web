@@ -1,8 +1,9 @@
 import {expect, test } from 'vitest'
 import {RecipeNodeStore} from "@/app/dao/recipe-node.store";
-import {NEAPOLITAN, NY_STYLE, PAPA_JOHNS} from "@/app/static-data";
+import {NEAPOLITAN, NEW_HAVEN_STYLE, NY_STYLE, PAPA_JOHNS} from "@/app/static-data";
 import "fake-indexeddb/auto";
 import {RecipeNode} from "@/app/model/recipe-node";
+import {branchingPizzaSetup, nonBranchingPizzaSetup} from '../misc';
 
 test('RecipeNodeStore should return an empty recipe node', async () => {
   const actual = await RecipeNodeStore.getRootRecipes();
@@ -48,18 +49,23 @@ test('RecipeNodeStore should delete child and children from recipe', async () =>
 
     const neapolitanRecipeNode = await RecipeNodeStore.getRecipeNodeById(NEAPOLITAN.id);
     expect(neapolitanRecipeNode).toEqual(NEAPOLITAN);
+});
+
+test('RecipeNodeStore should delete child and children from recipe on branching setup', async () => {
+    branchingPizzaSetup();
+
+    await RecipeNodeStore.deleteRecipeAndChildren(NY_STYLE.id);
+
+    const papaJohnsRecipeNode = await RecipeNodeStore.getRecipeNodeById(PAPA_JOHNS.id);
+    expect(papaJohnsRecipeNode).toEqual(undefined);
+
+    const nyStyleRecipeNode = await RecipeNodeStore.getRecipeNodeById(NY_STYLE.id);
+    expect(nyStyleRecipeNode).toEqual(undefined);
+
+    const newHavenStyleRecipeNode = await RecipeNodeStore.getRecipeNodeById(NEW_HAVEN_STYLE.id);
+    expect(newHavenStyleRecipeNode).toEqual(undefined);
+
+    const neapolitanRecipeNode = await RecipeNodeStore.getRecipeNodeById(NEAPOLITAN.id);
+    expect(neapolitanRecipeNode).toEqual(NEAPOLITAN);
 })
 
-const nonBranchingPizzaSetup = () => {
-  const parentId = NEAPOLITAN.id;
-  const parentNode = NEAPOLITAN;
-  RecipeNodeStore.addRecipeNode(parentNode);
-
-  const child1Id = NY_STYLE.id;
-  const child1Node = NY_STYLE;
-  RecipeNodeStore.addRecipeNode(child1Node);
-
-  const child2Id = NY_STYLE.id;
-  const child2Node = PAPA_JOHNS;
-  RecipeNodeStore.addRecipeNode(child2Node);
-}
