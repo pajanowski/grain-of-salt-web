@@ -11,7 +11,7 @@ const recipeNodesDb = new Dexie('recipe_id_to_node') as Dexie & {
 const NONE_PARENT_ID = 'None';
 
 recipeNodesDb.version(1).stores({
-    recipeNodes: '++id, parentId, name, ingredients, directions'
+    recipeNodes: '&id, parentId'
 })
 
 export class RecipeNodeStore {

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import {RecipeService} from "@/app/service/recipe.service";
-import {NEAPOLITAN, NY_STYLE, PAPA_JOHNS} from "@/app/static-data";
+import {NEAPOLITAN, NY_STYLE, PAPA_JOHNS} from "@/app/static-data.pizza";
 import {useMemo} from "react";
 
 const geistSans = Geist({
