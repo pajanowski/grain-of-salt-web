@@ -1,7 +1,7 @@
 export class Change<T> {
     changeType: ChangeType;
     content?: T
-    line?: number;
+    line: number;
 
     /**
      *
@@ -9,7 +9,7 @@ export class Change<T> {
      * @param content should only be undefined on 'Remove' changes
      * @param line line add which we are adding, removing, or replacing
      */
-    constructor(changeType: ChangeType, content: T | undefined, line?: number) {
+    constructor(changeType: ChangeType, content: T | undefined, line: number) {
         this.changeType = changeType;
         this.content = content;
         this.line = line;
@@ -17,25 +17,25 @@ export class Change<T> {
 }
 
 export class Add<T> extends Change<T> {
-    constructor(content: T, line?: number) {
+    constructor(content: T, line: number) {
         super('Add', content, line);
     }
 }
 
 export class Remove<T> extends Change<T> {
-    constructor(line?: number) {
+    constructor(line: number) {
         super('Remove', undefined, line);
     }
 }
 
 export class Noop<T> extends Change<T> {
-    constructor(content: T, line?: number) {
+    constructor(content: T, line: number) {
         super('Noop', content, line);
     }
 }
 
 export class Replace<T> extends Change<T> {
-    constructor(newContent: T, line?: number) {
+    constructor(newContent: T, line: number) {
         super('Replace', newContent, line);
     }
 }

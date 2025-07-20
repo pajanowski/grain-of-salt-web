@@ -37,7 +37,7 @@ export const NEW_HAVEN_STYLE = new RecipeNode(
     "New Haven Style",
     new ChangeList<Ingredient>(),
     new ChangeList<Direction>()
-        .replace(new Direction("Roll it out way bigger and thinner and cook it way hotter"), 4)
+        .replace(new Direction("Roll it out way bigger and thinner and cook it way hotter"), 3)
 );
 export const PAPA_JOHNS = new RecipeNode(
     uuid(),
