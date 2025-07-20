@@ -1,0 +1,19 @@
+import {RecipeService} from "@/app/service/recipe.service";
+import {NEAPOLITAN, NEW_HAVEN_STYLE, NY_STYLE, PAPA_JOHNS} from "@/app/static-data.pizza";
+
+const DebugMenu = () => {
+    return (
+        <div>
+            <button onClick={() => {
+                RecipeService.saveRecipeNode(NEAPOLITAN);
+                RecipeService.saveRecipeNode(NY_STYLE);
+                RecipeService.saveRecipeNode(PAPA_JOHNS);
+                RecipeService.saveRecipeNode(NEW_HAVEN_STYLE);
+            }}>Load data</button>
+            <button onClick={() => {RecipeService.deleteAll()}}>Delete All</button>
+        </div>
+
+    )
+}
+
+export default DebugMenu;

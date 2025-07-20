@@ -8,7 +8,7 @@ import {Add, Change, Remove, Replace} from "@/app/model/change";
 export class ChangeList<T> {
     items: Change<T>[] = [];
 
-    add(content: T, line?: number): this {
+    add(content: T, line: number): this {
         const addBack = new Add<T>(content, line);
         this.items.push(addBack);
         return this;

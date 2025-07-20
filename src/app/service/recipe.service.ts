@@ -41,6 +41,10 @@ export class RecipeService {
         return new Recipe(node.id, node.name, ingredients, directions);
     }
 
+    static async getRecipeChildren(id: string): Promise<RecipeNode[]> {
+        return RecipeNodeStore.getRecipeChildren(id);
+    }
+
     static collapseChangeLists<T>(changeLists: ChangeList<T>[]): T[] {
         const ret: T[] = [];
         changeLists.forEach(change => {
@@ -59,5 +63,9 @@ export class RecipeService {
             })
         })
         return ret;
+    }
+
+    static deleteAll() {
+        return RecipeNodeStore.truncateTable()
     }
 }

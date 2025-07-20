@@ -43,13 +43,13 @@ export class RecipeNodeStore {
         return ret;
     }
 
-    static async getRecipeChildren(id: string): Promise<RecipeNode[]  | undefined> {
+    static async getRecipeChildren(id: string): Promise<RecipeNode[]> {
         const parent = await this.getRecipeNodeById(id);
         if (parent) {
-            const collection = recipeNodesDb.recipeNodes.where({id: parent.id});
+            const collection = recipeNodesDb.recipeNodes.where({parentId: id});
             return collection.toArray();
         }
-        return;
+        return [];
     }
 
     static async deleteRecipeAndChildren(id: string): Promise<void> {
@@ -61,5 +61,9 @@ export class RecipeNodeStore {
             }
             await recipeNodesDb.recipeNodes.where('id').equals(parent.id).delete();
         }
+    }
+
+    static truncateTable() {
+        return recipeNodesDb.recipeNodes.clear();
     }
 }
