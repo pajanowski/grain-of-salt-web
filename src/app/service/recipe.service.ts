@@ -2,6 +2,9 @@ import {RecipeNodeStore} from "@/app/dao/recipe-node.store";
 import {RecipeNode} from "@/app/model/recipe-node";
 import {ChangeList} from "@/app/model/change.list";
 import {ChangeType} from "@/app/model/change";
+import {Recipe} from "@/app/model/recipe";
+import {Ingredient} from "@/app/model/ingredient";
+import {Direction} from "@/app/model/direction";
 
 const NONE_PARENT_ID = 'None';
 export class RecipeService {
@@ -20,6 +23,22 @@ export class RecipeService {
 
     static getRootRecipes(): Promise<RecipeNode[]> {
         return RecipeNodeStore.getRootRecipes();
+    }
+
+    static async getRecipeFromNodeId(nodeId: string): Promise<Recipe> {
+        const recipeNodes = await RecipeNodeStore.getRecipeAncestors(nodeId);
+        const node = recipeNodes[0];
+        const ingredientChangeList: ChangeList<Ingredient>[] = []
+        const directionChangeList: ChangeList<Direction>[] = [];
+        recipeNodes.forEach((node) => {
+            ingredientChangeList.splice(0, 0, node.ingredients);
+            directionChangeList.splice(0, 0, node.directions);
+        })
+
+        const ingredients = this.collapseChangeLists(ingredientChangeList);
+        const directions = this.collapseChangeLists(directionChangeList);
+
+        return new Recipe(node.id, node.name, ingredients, directions);
     }
 
     static collapseChangeLists<T>(changeLists: ChangeList<T>[]): T[] {

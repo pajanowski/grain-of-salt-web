@@ -2,9 +2,11 @@ import {forwardRef} from "react";
 import {RecipeService} from "@/app/service/recipe.service";
 import {useLiveQuery} from "dexie-react-hooks";
 import {NEAPOLITAN, NY_STYLE, PAPA_JOHNS} from "@/app/static-data.pizza";
+import {RecipeNode} from "@/app/model/recipe-node";
 
 interface RecipeListProps {
     className?: string;
+    recipeSelected: (recipeNode: RecipeNode | undefined) => void;
 }
 
 export interface RecipeListHandles {
@@ -25,7 +27,7 @@ const RecipeList = forwardRef<RecipeListHandles, RecipeListProps>((props: Recipe
                 RecipeService.saveRecipeNode(PAPA_JOHNS);
             }}>Load data</button>
             {rootRecipes.length > 0 && rootRecipes.map((recipe) => {
-                return (<div key={recipe.id}>
+                return (<div key={recipe.id} onClick={props.recipeSelected}>
                     {recipe.name}
                 </div>)
             })}

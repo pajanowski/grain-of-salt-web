@@ -1,6 +1,14 @@
 import {describe, expect, test} from "vitest";
 import {RecipeService} from "@/app/service/recipe.service";
-import {NEAPOLITAN, NEW_HAVEN_STYLE, NY_STYLE} from "@/app/static-data.pizza";
+import {
+    getNewHavenExpectedDirections, getNyStyleDirections,
+    getNyStyleIngredients,
+    NEAPOLITAN,
+    NEW_HAVEN_STYLE,
+    NY_STYLE
+} from "@/app/static-data.pizza";
+import {branchingPizzaSetup} from "@/__tests__/misc";
+
 
 describe('RecipeService', () => {
     test('collapseChangeLists with all adds should result in just the content of the list', () => {
@@ -14,17 +22,11 @@ describe('RecipeService', () => {
 
     test('collapseChangeLists inserting with adds should work as expected', () => {
         const ingredients = RecipeService.collapseChangeLists([NEAPOLITAN.ingredients, NY_STYLE.ingredients]);
-        const expectedIngredients = NEAPOLITAN.ingredients.items
-            .map((ingredients) => ingredients.content);
-        const ingredientAddition = NY_STYLE.ingredients.items[0];
-        expectedIngredients.splice(ingredientAddition.line, 0, ingredientAddition.content);
+        const expectedIngredients = getNyStyleIngredients();
         expect(ingredients).toEqual(expectedIngredients);
 
         const directions = RecipeService.collapseChangeLists([NEAPOLITAN.directions, NY_STYLE.directions]);
-        const expectedDirections = NEAPOLITAN.directions.items
-            .map((directions) => directions.content);
-        const directionInsertion = NY_STYLE.directions.items[0];
-        expectedDirections.splice(directionInsertion.line, 0, directionInsertion.content);
+        const expectedDirections = getNyStyleDirections();
         expect(directions).toEqual(expectedDirections);
     });
 
@@ -34,11 +36,14 @@ describe('RecipeService', () => {
             NY_STYLE.directions,
             NEW_HAVEN_STYLE.directions,
         ]);
-        const expectedDirections = RecipeService.collapseChangeLists([
-            NEAPOLITAN.directions, NY_STYLE.directions
-        ]);
-        const directionReplacement = NEW_HAVEN_STYLE.directions.items[0];
-        expectedDirections.splice(directionReplacement.line, 1, directionReplacement.content!);
+        const expectedDirections = getNewHavenExpectedDirections();
         expect(directions).toEqual(expectedDirections);
     });
+
+    test('getRecipeFromNodeId', async () => {
+        branchingPizzaSetup();
+        const recipeFromNodeId = await RecipeService.getRecipeFromNodeId(NEW_HAVEN_STYLE.id);
+        expect(recipeFromNodeId.directions).toEqual(getNewHavenExpectedDirections())
+        expect(recipeFromNodeId.ingredients).toEqual(getNyStyleIngredients()); // there was no ingredient change
+    })
 })
