@@ -50,7 +50,6 @@ export default function Home() {
                 {recipe &&
                     <RecipeCard recipe={recipe}/>
                 }
-                <RecipeForm/>
             </div>
         </>
     );

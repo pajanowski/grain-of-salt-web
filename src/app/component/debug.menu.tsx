@@ -1,9 +1,16 @@
 import {RecipeService} from "@/app/service/recipe.service";
 import {NEAPOLITAN, NEW_HAVEN_STYLE, NY_STYLE, PAPA_JOHNS} from "@/app/static-data.pizza";
+import {createPortal} from "react-dom";
+import RecipeForm, {RecipeFormHandle} from "@/app/component/recipe.form";
+import {useRef, useState} from "react";
+import {ModalDialog} from "@/app/component/modal.dialog";
 
 const DebugMenu = () => {
+    const [showModal, setShowModal] = useState(false);
+    const toggleModal = () => setShowModal(!showModal);
+    const recipeFormRef = useRef<RecipeFormHandle>(null);
     return (
-        <div>
+        <div className="flex flex-row gap-4">
             <button onClick={() => {
                 RecipeService.saveRecipeNode(NEAPOLITAN);
                 RecipeService.saveRecipeNode(NY_STYLE);
@@ -11,6 +18,14 @@ const DebugMenu = () => {
                 RecipeService.saveRecipeNode(NEW_HAVEN_STYLE);
             }}>Load data</button>
             <button onClick={() => {RecipeService.deleteAll()}}>Delete All</button>
+            <button onClick={toggleModal}>Add New Recipe</button>
+            {showModal && (
+                <ModalDialog onClose={toggleModal} onConfirm={() => {
+                    recipeFormRef.current!.submitRecipeNode()
+                }}>
+                    <RecipeForm ref={recipeFormRef}/>
+                </ModalDialog>
+            )}
         </div>
 
     )
