@@ -68,4 +68,8 @@ export class RecipeService {
     static deleteAll() {
         return RecipeNodeStore.truncateTable()
     }
+
+    static getRecipeNodeFromId(id: string) {
+        return RecipeNodeStore.getRecipeNodeById(id);
+    }
 }

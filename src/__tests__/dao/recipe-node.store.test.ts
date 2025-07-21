@@ -67,5 +67,5 @@ describe("RecipeNodeStore", () => {
 
         const neapolitanRecipeNode = await RecipeNodeStore.getRecipeNodeById(NEAPOLITAN.id);
         expect(neapolitanRecipeNode).toEqual(NEAPOLITAN);
-    })
+    });
 });
