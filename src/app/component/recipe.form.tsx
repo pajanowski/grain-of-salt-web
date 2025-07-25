@@ -5,7 +5,6 @@ import {RecipeService} from "@/app/service/recipe.service";
 import {Ingredient} from "@/app/model/ingredient";
 import {ChangeList} from "@/app/model/change.list";
 import {Direction} from "@/app/model/direction";
-import {Add} from "@/app/model/change";
 import {v4 as uuid} from 'uuid';
 
 export interface RecipeFormHandle {
@@ -110,6 +109,7 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                 <input 
                     type="text" 
                     placeholder="Recipe Name" 
+                    data-testid="recipe-name-input"
                     {...register("name", {required: true})} 
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
@@ -118,10 +118,11 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
 
             <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-lg font-semibold">Ingredients</h3>
+                    <h3 className="text-lg font-semibold" data-testid="ingredients-heading">Ingredients</h3>
                     <button 
                         type="button" 
                         onClick={addIngredient}
+                        data-testid="add-ingredient-button"
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm"
                     >
                         Add Ingredient
@@ -134,6 +135,7 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                             <button 
                                 type="button" 
                                 onClick={() => moveIngredientUp(index)}
+                                data-testid={`ingredient-move-up-button-${index}`}
                                 className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-1 px-2 rounded-t text-sm"
                             >
                                 ↑
@@ -141,6 +143,7 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                             <button 
                                 type="button" 
                                 onClick={() => moveIngredientDown(index)}
+                                data-testid={`ingredient-move-down-button-${index}`}
                                 className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-1 px-2 rounded-b text-sm"
                             >
                                 ↓
@@ -150,18 +153,21 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                         <input 
                             type="text" 
                             placeholder="Name" 
+                            data-testid={`ingredient-name-input-${index}`}
                             {...register(`ingredients.items.${index}.content.name`, {required: true})} 
                             className="shadow appearance-none border rounded flex-grow py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                         <input 
                             type="number" 
                             placeholder="Amount" 
+                            data-testid={`ingredient-amount-input-${index}`}
                             {...register(`ingredients.items.${index}.content.amount`, {required: true, valueAsNumber: true})} 
                             className="shadow appearance-none border rounded w-20 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                         <input 
                             type="text" 
                             placeholder="Unit" 
+                            data-testid={`ingredient-unit-input-${index}`}
                             {...register(`ingredients.items.${index}.content.unit`, {required: true})} 
                             className="shadow appearance-none border rounded w-20 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
@@ -169,6 +175,7 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                         <button 
                             type="button" 
                             onClick={() => ingredientFields.remove(index)}
+                            data-testid={`ingredient-remove-button-${index}`}
                             className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-sm"
                         >
                             Remove
@@ -176,16 +183,17 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                     </div>
                 ))}
                 {ingredientFields.fields.length === 0 && (
-                    <p className="text-gray-500 italic">No ingredients added yet.</p>
+                    <p className="text-gray-500 italic" data-testid="no-ingredients-message">No ingredients added yet.</p>
                 )}
             </div>
 
             <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-lg font-semibold">Directions</h3>
+                    <h3 className="text-lg font-semibold" data-testid="directions-heading">Directions</h3>
                     <button 
                         type="button" 
                         onClick={addDirection}
+                        data-testid="add-direction-button"
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm"
                     >
                         Add Direction
@@ -198,6 +206,7 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                             <button 
                                 type="button" 
                                 onClick={() => moveDirectionUp(index)}
+                                data-testid={`direction-move-up-button-${index}`}
                                 className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-1 px-2 rounded-t text-sm"
                             >
                                 ↑
@@ -205,6 +214,7 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                             <button 
                                 type="button" 
                                 onClick={() => moveDirectionDown(index)}
+                                data-testid={`direction-move-down-button-${index}`}
                                 className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-1 px-2 rounded-b text-sm"
                             >
                                 ↓
@@ -215,6 +225,7 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                             <label className="block text-gray-700 text-sm font-bold mb-1">Step {index + 1}</label>
                             <textarea 
                                 placeholder="Direction" 
+                                data-testid={`direction-input-${index}`}
                                 {...register(`directions.items.${index}.content.content`, {required: true})} 
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 rows={3}
@@ -224,6 +235,7 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                         <button 
                             type="button" 
                             onClick={() => directionFields.remove(index)}
+                            data-testid={`direction-remove-button-${index}`}
                             className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-sm mt-6"
                         >
                             Remove
@@ -231,13 +243,14 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                     </div>
                 ))}
                 {directionFields.fields.length === 0 && (
-                    <p className="text-gray-500 italic">No directions added yet.</p>
+                    <p className="text-gray-500 italic" data-testid="no-directions-message">No directions added yet.</p>
                 )}
             </div>
 
             {props.onSubmit && (
                 <button 
                     type="submit" 
+                    data-testid="submit-recipe-button"
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
                     Submit Recipe
