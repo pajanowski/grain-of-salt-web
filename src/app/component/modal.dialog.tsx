@@ -1,8 +1,5 @@
 import {createPortal} from "react-dom";
 import React, {useEffect} from "react";
-import {RecipeNode} from "@/app/model/recipe-node";
-import Dexie from "dexie";
-import Promise = Dexie.Promise;
 
 export interface ModalDialogProps {
     onClose: () => void,
@@ -32,7 +29,7 @@ export const ModalDialog = ({onClose, children, onConfirm}: ModalDialogProps) =>
 
     return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50">
-            <div className="relative bg-white rounded-lg shadow-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="relative bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                 <div className="flex flex-col">
                     <div className="mb-4">
                         {children}

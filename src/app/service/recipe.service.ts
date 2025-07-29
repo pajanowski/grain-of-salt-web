@@ -1,12 +1,11 @@
 import {RecipeNodeStore} from "@/app/dao/recipe-node.store";
-import {RecipeNode} from "@/app/model/recipe-node";
+import {NONE_PARENT_ID, RecipeNode} from "@/app/model/recipe-node";
 import {ChangeList} from "@/app/model/change.list";
 import {ChangeType} from "@/app/model/change";
 import {Recipe} from "@/app/model/recipe";
 import {Ingredient} from "@/app/model/ingredient";
 import {Direction} from "@/app/model/direction";
 
-const NONE_PARENT_ID = 'None';
 export class RecipeService {
 
     static saveRecipeNode(recipeNode: RecipeNode) {

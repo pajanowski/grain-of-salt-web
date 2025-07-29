@@ -8,6 +8,15 @@ import {Add, Change, Remove, Replace} from "@/app/model/change";
 export class ChangeList<T> {
     items: Change<T>[] = [];
 
+
+    // create a change list of all noops for a list of items
+    // used for going from recipe to recipe node
+    constructor(items?: T[]) {
+        this.items = items?.map((item, line) => {
+            return new Change('Noop', item, line);
+        }) ?? [];
+    }
+
     add(content: T, line: number): this {
         const addBack = new Add<T>(content, line);
         this.items.push(addBack);

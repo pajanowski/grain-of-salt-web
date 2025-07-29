@@ -7,7 +7,7 @@ import {Recipe} from "@/app/model/recipe";
 import {RecipeService} from "@/app/service/recipe.service";
 import DebugMenu from "@/app/component/debug.menu";
 import {useLiveQuery} from "dexie-react-hooks";
-import RecipeForm from "@/app/component/recipe.form";
+import RecipeForm from "@/app/component/form/recipe.form";
 
 
 export default function Home() {

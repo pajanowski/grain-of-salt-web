@@ -1,8 +1,9 @@
 import {RecipeService} from "@/app/service/recipe.service";
 import {NEAPOLITAN, NEW_HAVEN_STYLE, NY_STYLE, PAPA_JOHNS} from "@/app/static-data.pizza";
-import RecipeForm, {RecipeFormHandle} from "@/app/component/recipe.form";
+import RecipeForm, {RecipeFormHandle} from "@/app/component/form/recipe.form";
 import {useRef, useState} from "react";
 import {ModalDialog} from "@/app/component/modal.dialog";
+import RecipeFormV2 from "@/app/component/form/recipe.form.v2";
 
 const DebugMenu = () => {
     const [showModal, setShowModal] = useState(false);
@@ -22,7 +23,7 @@ const DebugMenu = () => {
                 <ModalDialog onClose={toggleModal} onConfirm={() => {
                     recipeFormRef.current!.submitRecipeNode()
                 }}>
-                    <RecipeForm ref={recipeFormRef}/>
+                    <RecipeFormV2 ref={recipeFormRef}/>
                 </ModalDialog>
             )}
         </div>

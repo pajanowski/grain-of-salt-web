@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useCallback} from 'react';
+import React, {forwardRef, useImperativeHandle, useCallback, useState} from 'react';
 import {useFieldArray, useForm} from 'react-hook-form';
 import {RecipeNode} from "@/app/model/recipe-node";
 import {RecipeService} from "@/app/service/recipe.service";
@@ -25,6 +25,7 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
             directions: new ChangeList<Direction>()
         }
     });
+    const [showAddIngredient, setShowAddIngredient] = useState<boolean>(false);
 
     const ingredientFields = useFieldArray({
         control,
@@ -149,37 +150,6 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                                 ↓
                             </button>
                         </div>
-
-                        <input 
-                            type="text" 
-                            placeholder="Name" 
-                            data-testid={`ingredient-name-input-${index}`}
-                            {...register(`ingredients.items.${index}.content.name`, {required: true})} 
-                            className="shadow appearance-none border rounded flex-grow py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                        <input 
-                            type="number" 
-                            placeholder="Amount" 
-                            data-testid={`ingredient-amount-input-${index}`}
-                            {...register(`ingredients.items.${index}.content.amount`, {required: true, valueAsNumber: true})} 
-                            className="shadow appearance-none border rounded w-20 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                        <input 
-                            type="text" 
-                            placeholder="Unit" 
-                            data-testid={`ingredient-unit-input-${index}`}
-                            {...register(`ingredients.items.${index}.content.unit`, {required: true})} 
-                            className="shadow appearance-none border rounded w-20 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-
-                        <button 
-                            type="button" 
-                            onClick={() => ingredientFields.remove(index)}
-                            data-testid={`ingredient-remove-button-${index}`}
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-sm"
-                        >
-                            Remove
-                        </button>
                     </div>
                 ))}
                 {ingredientFields.fields.length === 0 && (

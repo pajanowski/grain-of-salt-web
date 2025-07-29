@@ -1,6 +1,6 @@
 import {describe, test, expect, vi} from 'vitest';
 import {render, fireEvent} from '@testing-library/react';
-import RecipeForm, {RecipeFormHandle} from '@/app/component/recipe.form';
+import RecipeForm, {RecipeFormHandle} from '@/app/component/form/recipe.form';
 import {useRef} from 'react';
 
 // Mock uuid to return predictable values

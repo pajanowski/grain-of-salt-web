@@ -1,4 +1,4 @@
-import {RecipeNode} from "@/app/model/recipe-node";
+import {NONE_PARENT_ID, RecipeNode} from "@/app/model/recipe-node";
 import Dexie, {EntityTable} from "dexie";
 
 const recipeNodesDb = new Dexie('recipe_id_to_node') as Dexie & {
@@ -8,7 +8,6 @@ const recipeNodesDb = new Dexie('recipe_id_to_node') as Dexie & {
     >,
 };
 
-const NONE_PARENT_ID = 'None';
 
 recipeNodesDb.version(1).stores({
     recipeNodes: '&id, parentId'
