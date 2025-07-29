@@ -2,12 +2,15 @@ import {ModalDialog} from "@/app/component/modal.dialog";
 import RecipeFormV2 from "@/app/component/form/recipe.form.v2";
 import {forwardRef, useImperativeHandle, useRef, useState} from "react";
 import {RecipeFormHandle} from "@/app/component/form/recipe.form";
+import {Recipe} from "@/app/model/recipe";
 
 export interface RecipeFormModalHandle {
    toggle: () => void;
 }
 
-interface RecipeFormModalProps {}
+interface RecipeFormModalProps {
+    recipe?: Recipe;
+}
 
 const RecipeFormModal = forwardRef<RecipeFormModalHandle, RecipeFormModalProps>((props, ref) => {
     const [showModal, setShowModal] = useState(false);
@@ -30,7 +33,7 @@ const RecipeFormModal = forwardRef<RecipeFormModalHandle, RecipeFormModalProps>(
                 recipeFormRef.current!.submitRecipeNode();
                 toggleModal();
             }}>
-                <RecipeFormV2 ref={recipeFormRef}/>
+                <RecipeFormV2 ref={recipeFormRef} recipe={props.recipe}/>
             </ModalDialog>
             }
         </div>

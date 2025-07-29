@@ -60,7 +60,9 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
         setDirections(directionChangeList.items);
     }, [recipe]);
     const {register, handleSubmit, getValues, formState: {errors}} = useForm<RecipeNode>({
-        defaultValues: recipeNode
+        defaultValues: {
+            name: recipe?.name
+        }
     });
     const onSubmit = (data: unknown) => {
         console.log(data);
@@ -70,7 +72,16 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
     };
 
     const getChangeBackground = (changeType: ChangeType) => {
-        return changeType == 'Add' ? "bg-green-300" : "bg-red-300"
+        switch (changeType as ChangeType) {
+            case "Add":
+                return "bg-green-300";
+            case "Remove":
+                return "bg-red-300";
+            case "Noop":
+                return "bg-grey-500";
+            case "Replace":
+                return "bg-red-600";
+        }
     }
 
     function getDirectionForm(index: number) {

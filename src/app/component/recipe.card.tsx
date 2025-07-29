@@ -1,5 +1,7 @@
-import {Children, forwardRef, ReactNode} from "react";
+import {Children, forwardRef, ReactNode, useRef} from "react";
 import {Recipe} from "@/app/model/recipe";
+import {PencilIcon} from "@heroicons/react/24/solid";
+import RecipeFormModal, {RecipeFormModalHandle} from "@/app/component/recipe.form.modal";
 
 interface RecipeCardProps {
     recipe: Recipe;
@@ -34,10 +36,17 @@ const ListItems = (props: ListItemsProps) => {
 
 const RecipeCard = forwardRef<RecipeCardHandle, RecipeCardProps>((props: RecipeCardProps, _ref) => {
     const recipe = props.recipe!;
+    const modalRef = useRef<RecipeFormModalHandle>(null);
 
     return (
         <div className={"flex flex-col gap-2"}>
-            <div>{recipe.name}</div>
+            <RecipeFormModal recipe={recipe} ref={modalRef}/>
+            <div className={"flex flex-row justify-between"}>
+                {recipe.name}
+                <button onClick={() => modalRef.current!.toggle()}>
+                    <PencilIcon className={"size-6"}/>
+                </button>
+            </div>
             <ListItems title={"Ingredients"}>
                 {recipe.ingredients.map((ingredient) => (
                     <div key={ingredient.id} className="flex flex-row justify-between">
