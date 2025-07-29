@@ -2,7 +2,7 @@ import React from "react";
 
 interface FormRowButtonsProps {
     index: number;
-    removeCallback: (index: number) => void;
+    removeCallback: (index?: number) => void;
     confirmCallback: (index: number) => void;
     valid: boolean;
 }

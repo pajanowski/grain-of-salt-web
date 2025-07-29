@@ -1,6 +1,6 @@
 import {RecipeService} from "@/app/service/recipe.service";
 import {NEAPOLITAN, NEW_HAVEN_STYLE, NY_STYLE, PAPA_JOHNS} from "@/app/static-data.pizza";
-import RecipeForm, {RecipeFormHandle} from "@/app/component/form/recipe.form";
+import {RecipeFormHandle} from "@/app/component/form/recipe.form";
 import {useRef, useState} from "react";
 import {ModalDialog} from "@/app/component/modal.dialog";
 import RecipeFormV2 from "@/app/component/form/recipe.form.v2";
@@ -21,7 +21,8 @@ const DebugMenu = () => {
             <button onClick={toggleModal}>Add New Recipe</button>
             {showModal && (
                 <ModalDialog onClose={toggleModal} onConfirm={() => {
-                    recipeFormRef.current!.submitRecipeNode()
+                    recipeFormRef.current!.submitRecipeNode();
+                    toggleModal();
                 }}>
                     <RecipeFormV2 ref={recipeFormRef}/>
                 </ModalDialog>

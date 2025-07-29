@@ -32,5 +32,16 @@ export class ChangeList<T> {
         this.items.push(new Remove<T>(line));
         return this;
     };
+
+    static from<T>(changes: Change<T>[]) {
+        const changeList = new ChangeList<T>();
+        for (const item of changes) {
+            if (item.changeType == "Noop") {
+                continue;
+            }
+            changeList.items.push(item);
+        }
+        return changeList;
+    }
 }
 
