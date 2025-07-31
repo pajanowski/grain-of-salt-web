@@ -1,5 +1,5 @@
 import {ModalDialog} from "@/app/component/modal.dialog";
-import RecipeFormV2 from "@/app/component/form/recipe.form.v2";
+import RecipeFormV2, {EditType} from "@/app/component/form/recipe.form.v2";
 import {forwardRef, useImperativeHandle, useRef, useState} from "react";
 import {RecipeFormHandle} from "@/app/component/form/recipe.form";
 import {Recipe} from "@/app/model/recipe";
@@ -10,6 +10,7 @@ export interface RecipeFormModalHandle {
 
 interface RecipeFormModalProps {
     recipe?: Recipe;
+    editType: EditType;
 }
 
 const RecipeFormModal = forwardRef<RecipeFormModalHandle, RecipeFormModalProps>((props, ref) => {
@@ -33,7 +34,8 @@ const RecipeFormModal = forwardRef<RecipeFormModalHandle, RecipeFormModalProps>(
                 recipeFormRef.current!.submitRecipeNode();
                 toggleModal();
             }}>
-                <RecipeFormV2 ref={recipeFormRef} recipe={props.recipe}/>
+                {props.editType}
+                <RecipeFormV2 ref={recipeFormRef} editType={props.editType} recipe={props.recipe}/>
             </ModalDialog>
             }
         </div>

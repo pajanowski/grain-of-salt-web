@@ -22,6 +22,14 @@ export class RecipeNodeStore {
         return recipeNodesDb.recipeNodes.add(recipeNode);
     }
 
+    static updateRecipeNode(recipeNode: RecipeNode): Promise<number> {
+        return recipeNodesDb.recipeNodes.where({id: recipeNode.id}).modify(item => {
+            item.name = recipeNode.name;
+            item.ingredients = recipeNode.ingredients;
+            item.directions = recipeNode.directions;
+        });
+    }
+
     static getRecipeNodeById(id: string): Promise<RecipeNode | undefined> {
         return recipeNodesDb.recipeNodes.get(id);
     }

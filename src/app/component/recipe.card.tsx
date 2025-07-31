@@ -1,6 +1,6 @@
-import {Children, forwardRef, ReactNode, useRef} from "react";
+import {Children, forwardRef, ReactNode, useRef, useState} from "react";
 import {Recipe} from "@/app/model/recipe";
-import {PencilIcon} from "@heroicons/react/24/solid";
+import {ArrowRightStartOnRectangleIcon, PencilIcon} from "@heroicons/react/24/solid";
 import RecipeFormModal, {RecipeFormModalHandle} from "@/app/component/recipe.form.modal";
 
 interface RecipeCardProps {
@@ -37,14 +37,24 @@ const ListItems = (props: ListItemsProps) => {
 const RecipeCard = forwardRef<RecipeCardHandle, RecipeCardProps>((props: RecipeCardProps, _ref) => {
     const recipe = props.recipe!;
     const modalRef = useRef<RecipeFormModalHandle>(null);
+    const [editType, setEditType] = useState("Edit");
 
     return (
         <div className={"flex flex-col gap-2"}>
-            <RecipeFormModal recipe={recipe} ref={modalRef}/>
+            <RecipeFormModal recipe={recipe} ref={modalRef} editType={editType}/>
             <div className={"flex flex-row justify-between"}>
                 {recipe.name}
-                <button onClick={() => modalRef.current!.toggle()}>
+                <button onClick={() => {
+                    setEditType("Edit")
+                    modalRef.current!.toggle()
+                }}>
                     <PencilIcon className={"size-6"}/>
+                </button>
+                <button onClick={() => {
+                    setEditType("Fork")
+                    modalRef.current!.toggle()
+                }}>
+                    <ArrowRightStartOnRectangleIcon className={"size-6"}/>
                 </button>
             </div>
             <ListItems title={"Ingredients"}>

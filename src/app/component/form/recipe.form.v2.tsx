@@ -53,7 +53,13 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
             },
             submitRecipeNode(): Promise<unknown> {
                 const recipeNodeFromForm = this.getRecipeNodeFromForm();
-                return RecipeService.saveRootRecipe(recipeNodeFromForm);
+                if (editType == "Add") {
+                    return RecipeService.saveRootRecipe(recipeNodeFromForm);
+                } else if (editType == "Edit") {
+                    return RecipeService.updateRecipeNode(recipeNodeFromForm);
+                } else {
+                    return RecipeService.saveRecipeNode(recipeNodeFromForm);
+                }
             }
         }
     });
@@ -96,15 +102,26 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
         }
     }
 
-    function getDirectionForm(index: number, direction?: Direction) {
+    function getDirectionForm(index: number, directionChange?: Change<Direction>) {
         return <DirectionForm line={index}
-                              direction={direction}
+                              direction={directionChange?.content}
                               removeCallback={() => {
                                   setActiveDirectionFormIndex(-1);
                                   setActiveDirectionEdit(false);
                               }}
                               confirmCallback={(direction) => {
-                                  directions.splice(index, 0, new Change("Add", direction, index));
+
+                                  if(activeDirectionEdit) {
+                                      if (directionChange?.changeType == "Noop") {
+                                          const remove = new Change("Remove", directionChange.content, directionChange.line);
+                                          directions.splice(index, 0, new Change("Add", direction, index));
+                                          directions.splice(index, 0, remove);
+                                      } else if(directionChange?.changeType == "Add") {
+                                          directions.splice(index - 1, 1, new Change("Add", direction, index));
+                                      }
+                                  } else {
+                                      directions.splice(index, 0, new Change("Add", direction, index));
+                                  }
                                   setDirections([
                                       ...directions,
                                   ]);
@@ -134,96 +151,105 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
         );
     }
 
+    const editing = editType == "Edit";
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Recipe Name</label>
-                <input
-                    type="text"
-                    placeholder="Recipe Name"
-                    data-testid="recipe-name-input"
-                    {...register("name", {required: true})}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-                {errors.name && <span className="text-red-500 text-xs italic">Recipe name is required</span>}
-            </div>
-
-            <label className="block text-gray-700 text-sm font-bold mb-2">Ingredients</label>
-            <FormRowContextButtons addCallback={() => setActiveIngredientFormIndex(0)}/>
-            {activeIngredientFormIndex == 0 && getIngredientsForm(0)}
-            {ingredients && ingredients.map(((ingredient, index) => (
-                <div key={ingredient.content?.id}>
-                    <FormRowContextButtons addCallback={() => {setActiveIngredientFormIndex(index + 1)}}
-                                           editCallback={() => {setActiveIngredientFormIndex(index)}}
-                                           removeCallBack={() => {
-                                               switch (ingredient.changeType as ChangeType) {
-                                                   case "Add":
-                                                   case "Remove":
-                                                       ingredients.splice(index, 1);
-                                                       setIngredients([...ingredients]);
-                                                       break;
-                                                   case "Replace":
-                                                   case "Noop":
-                                                       ingredients.splice(index, 1, new Change("Remove", ingredient.content, index));
-                                                       break;
-                                               }
-                                           }}
-                    >
-                        <div className={"flex flex-row justify-between " + getChangeBackground(ingredient.changeType)}>
-                            <div>{ingredient.content?.name}</div>
-                            <div className={"flex flex-row gap-2"}>
-                                <div>{ingredient.content?.amount}</div>
-                                <div>{ingredient.content?.unit}</div>
-                            </div>
-                        </div>
-                    </FormRowContextButtons>
-                    {index + 1 == activeIngredientFormIndex && (
-                        <div>
-                            {getIngredientsForm(index + 1)}
-                        </div>
-                    )}
+            <div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">Recipe Name</label>
+                    <input
+                        type="text"
+                        placeholder="Recipe Name"
+                        data-testid="recipe-name-input"
+                        {...register("name", {required: true})}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                    {errors.name && <span className="text-red-500 text-xs italic">Recipe name is required</span>}
                 </div>
-            )))}
 
-            <label className="block text-gray-700 text-sm font-bold mb-2">Directions</label>
-            <FormRowContextButtons addCallback={() => setActiveDirectionFormIndex(0)}/>
-            {activeDirectionFormIndex == 0 && getDirectionForm(0)}
-            {directions && directions.map(((direction, index) => (
-                <div key={direction.content?.id}>
-
-                    <FormRowContextButtons addCallback={() => {setActiveDirectionFormIndex(index + 1)}}
-                                           editCallback={() => {
-                                               setActiveDirectionFormIndex(index);
-                                               setActiveDirectionEdit(true);
-                                           }}
-                                           removeCallBack={() => {
-                                               console.log("")
-                                               switch (direction.changeType as ChangeType) {
-                                                   case "Add":
-                                                   case "Remove":
-                                                       directions.splice(index, 1);
-                                                       setDirections([...directions]);
-                                                       break;
-                                                   case "Replace":
-                                                   case "Noop":
-                                                       directions.splice(index, 1, new Change("Remove", direction.content, index));
-                                                       break;
-                                               }
-                                           }}
-                    >
-                        <div
-                             className={"flex flex-row gap-2 justify-between " + getChangeBackground(direction.changeType)}
+                <label className="block text-gray-700 text-sm font-bold mb-2">Ingredients</label>
+                <FormRowContextButtons addCallback={editing ? undefined : () => setActiveIngredientFormIndex(0)}/>
+                {activeIngredientFormIndex == 0 && getIngredientsForm(0)}
+                {ingredients && ingredients.map(((ingredient, index) => (
+                    <div key={ingredient.content?.id}>
+                        <FormRowContextButtons addCallback={editType == "Edit" ? undefined : () => {setActiveIngredientFormIndex(index + 1)}}
+                                               editCallback={() => {setActiveIngredientFormIndex(index)}}
+                                               removeCallBack={editType == "Edit" ? undefined : () => {
+                                                   switch (ingredient.changeType as ChangeType) {
+                                                       case "Add":
+                                                       case "Remove":
+                                                           ingredients.splice(index, 1);
+                                                           setIngredients([...ingredients]);
+                                                           break;
+                                                       case "Replace":
+                                                       case "Noop":
+                                                           ingredients.splice(index, 1, new Change("Remove", ingredient.content, index));
+                                                           break;
+                                                   }
+                                               }}
                         >
-                            {direction.content?.content}
-                        </div>
-                    </FormRowContextButtons>
-                    {index + 1 == activeDirectionFormIndex && (
-                        <div>
-                            {getDirectionForm(index + 1, activeDirectionEdit ? direction.content : undefined)}
-                        </div>
-                    )}
-                </div>
-            )))}
+                            <div className={"flex flex-row justify-between " + getChangeBackground(ingredient.changeType)}>
+                                <div>{ingredient.content?.name}</div>
+                                <div className={"flex flex-row gap-2"}>
+                                    <div>{ingredient.content?.amount}</div>
+                                    <div>{ingredient.content?.unit}</div>
+                                </div>
+                            </div>
+                        </FormRowContextButtons>
+                        {index + 1 == activeIngredientFormIndex && (
+                            <div>
+                                {getIngredientsForm(index + 1)}
+                            </div>
+                        )}
+                    </div>
+                )))}
+
+            </div>
+            <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2">Directions</label>
+                <FormRowContextButtons addCallback={editing ? undefined : () => setActiveDirectionFormIndex(0)}/>
+                {activeDirectionFormIndex == 0 && getDirectionForm(0)}
+                {directions && directions.map(((direction, index) => (
+                    <div key={direction.changeType + direction.content?.id}>
+                        {!(activeDirectionFormIndex == index + 1 && activeDirectionEdit) && (
+                            <FormRowContextButtons addCallback={editing ? undefined : () => {
+                                                       setActiveDirectionEdit(false);
+                                                       setActiveDirectionFormIndex(index + 1)
+                                                   }}
+                                                   editCallback={() => {
+                                                       setActiveDirectionFormIndex(index + 1);
+                                                       setActiveDirectionEdit(true);
+                                                   }}
+                                                   removeCallBack={editing ? undefined : () => {
+                                                       console.log("")
+                                                       switch (direction.changeType as ChangeType) {
+                                                           case "Add":
+                                                           case "Remove":
+                                                               directions.splice(index, 1);
+                                                               setDirections([...directions]);
+                                                               break;
+                                                           case "Replace":
+                                                           case "Noop":
+                                                               directions.splice(index, 1, new Change("Remove", direction.content, index));
+                                                               break;
+                                                       }
+                                                   }}
+                            >
+                                <div
+                                     className={"flex flex-row justify-between " + getChangeBackground(direction.changeType)}
+                                >
+                                    {direction.content?.content}
+                                </div>
+                            </FormRowContextButtons>
+                        )}
+                        {index + 1 == activeDirectionFormIndex && (
+                            <div>
+                                {getDirectionForm(index + 1, activeDirectionEdit ? direction: undefined)}
+                            </div>
+                        )}
+                    </div>
+                )))}
+            </div>
         </form>
     )
 

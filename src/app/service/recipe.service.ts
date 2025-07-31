@@ -12,6 +12,10 @@ export class RecipeService {
         return RecipeNodeStore.addRecipeNode(recipeNode);
     }
 
+    static updateRecipeNode(recipeNode: RecipeNode) {
+        return RecipeNodeStore.updateRecipeNode(recipeNode);
+    }
+
     static saveRootRecipe(recipeNode: RecipeNode) {
         if (recipeNode.parentId != null && recipeNode.parentId != NONE_PARENT_ID) {
             throw new Error(`${recipeNode.parentId} can't be saved as a parent because it has an id`);
