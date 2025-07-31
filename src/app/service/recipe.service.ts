@@ -37,7 +37,7 @@ export class RecipeService {
         const ingredients = this.collapseChangeLists(ingredientChangeList);
         const directions = this.collapseChangeLists(directionChangeList);
 
-        return new Recipe(node.id, node.name, ingredients, directions);
+        return new Recipe(node.id, node.parentId, node.name, ingredients, directions);
     }
 
     static async getRecipeChildren(id: string): Promise<RecipeNode[]> {

@@ -7,7 +7,8 @@ import FormRowButtons from "@/app/component/form/form-row-buttons";
 export interface DirectionFormProps {
     line: number,
     removeCallback: () => void,
-    confirmCallback: (direction: Direction) => void
+    confirmCallback: (direction: Direction) => void,
+    direction?: Direction
 }
 
 export interface DirectionFormHandle {
@@ -16,8 +17,8 @@ export interface DirectionFormHandle {
 const DirectionForm = forwardRef<DirectionFormHandle, DirectionFormProps>((props: DirectionFormProps, _ref) => {
     const {register, getValues, formState: {errors}, reset} = useForm<Direction>({
         defaultValues: {
-            id: uuid(),
-            content: ""
+            id: props.direction?.id ?? uuid(),
+            content: props.direction?.content ?? ""
         }
     });
     return (

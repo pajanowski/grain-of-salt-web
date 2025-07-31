@@ -6,7 +6,7 @@ export const NONE_PARENT_ID = 'None';
 
 export class RecipeNode {
   id: string;
-  parentId: string | null;
+  parentId: string;
   name: string;
   ingredients: ChangeList<Ingredient>;
   directions: ChangeList<Direction>;

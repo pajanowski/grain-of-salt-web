@@ -13,7 +13,11 @@ import DirectionForm from "@/app/component/form/direction.form";
 import FormRowContextButtons from "@/app/component/form/form-row-context-buttons";
 import {RecipeService} from "@/app/service/recipe.service";
 
+export const EditTypes = ['Add', 'Edit', 'Fork'];
+export type EditType = typeof EditTypes[number];
+
 interface RecipeFormV2Props {
+    editType?: EditType,
     recipe?: Recipe,
     ref?: RefObject<RecipeFormHandle>,
     onSubmit?: (recipeNode: RecipeNode) => void,
@@ -21,19 +25,27 @@ interface RecipeFormV2Props {
 
 const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: RecipeFormV2Props, ref) => {
     const recipe = props.recipe;
+    const editType = props.editType ?? 'Add';
     const [recipeNode, setRecipeNode] = useState<RecipeNode>(new RecipeNode());
     const [ingredients, setIngredients] = useState<Change<Ingredient>[]>([]);
     const [directions, setDirections] = useState<Change<Direction>[]>([]);
     const [activeIngredientFormIndex, setActiveIngredientFormIndex] = useState(-1);
+    const [activeIngredientEdit, setActiveIngredientEdit] = useState<boolean>(false);
+
     const [activeDirectionFormIndex, setActiveDirectionFormIndex] = useState(-1);
+    const [activeDirectionEdit, setActiveDirectionEdit] = useState<boolean>(false);
 
     useImperativeHandle(ref, () => {
         return {
             getRecipeNodeFromForm(): RecipeNode {
                 const values = getValues();
+                const editing = editType == 'Edit';
+                const adding = editType == 'Add';
+                const forking = editType == 'Fork';
                 return new RecipeNode(
-                    uuid(),
-                    NONE_PARENT_ID,
+                    editing ? recipe?.id : uuid(),
+                    // if editing, use same parent, if forking, use current recipe's id as parent, else we're adding a parent
+                    editing ? recipe?.parentId : forking ? recipe?.id : NONE_PARENT_ID,
                     values.name,
                     ChangeList.from<Ingredient>(ingredients),
                     ChangeList.from<Direction>(directions),
@@ -84,10 +96,12 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
         }
     }
 
-    function getDirectionForm(index: number) {
+    function getDirectionForm(index: number, direction?: Direction) {
         return <DirectionForm line={index}
+                              direction={direction}
                               removeCallback={() => {
-                                  setActiveDirectionFormIndex(-1)
+                                  setActiveDirectionFormIndex(-1);
+                                  setActiveDirectionEdit(false);
                               }}
                               confirmCallback={(direction) => {
                                   directions.splice(index, 0, new Change("Add", direction, index));
@@ -95,25 +109,26 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
                                       ...directions,
                                   ]);
                                   setActiveDirectionFormIndex(-1);
+                                  setActiveDirectionEdit(false);
                               }}
         />;
     }
 
-    function getIngredientsForm(index: number) {
+    function getIngredientsForm(index: number, ingredient?: Ingredient) {
         return (
             <div>
                 {index}
             <IngredientForm line={index}
-                              removeCallback={() => {
-                                  setActiveIngredientFormIndex(-1)
-                              }}
-                              confirmCallback={(ingredient) => {
-                                  ingredients.splice(index, 0, new Change("Add", ingredient, index));
-                                  setIngredients([
-                                      ...ingredients,
-                                  ]);
-                                  setActiveIngredientFormIndex(-1);
-                              }}
+                            removeCallback={() => {
+                                setActiveIngredientFormIndex(-1)
+                            }}
+                            confirmCallback={(ingredient) => {
+                                ingredients.splice(index, 0, new Change("Add", ingredient, index));
+                                setIngredients([
+                                    ...ingredients,
+                                ]);
+                                setActiveIngredientFormIndex(-1);
+                            }}
             />
             </div>
         );
@@ -175,8 +190,12 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
             {activeDirectionFormIndex == 0 && getDirectionForm(0)}
             {directions && directions.map(((direction, index) => (
                 <div key={direction.content?.id}>
+
                     <FormRowContextButtons addCallback={() => {setActiveDirectionFormIndex(index + 1)}}
-                                           editCallback={() => {setActiveDirectionFormIndex(index)}}
+                                           editCallback={() => {
+                                               setActiveDirectionFormIndex(index);
+                                               setActiveDirectionEdit(true);
+                                           }}
                                            removeCallBack={() => {
                                                console.log("")
                                                switch (direction.changeType as ChangeType) {
@@ -200,7 +219,7 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
                     </FormRowContextButtons>
                     {index + 1 == activeDirectionFormIndex && (
                         <div>
-                            {getDirectionForm(index + 1)}
+                            {getDirectionForm(index + 1, activeDirectionEdit ? direction.content : undefined)}
                         </div>
                     )}
                 </div>
