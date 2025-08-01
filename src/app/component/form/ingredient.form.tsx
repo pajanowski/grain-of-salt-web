@@ -12,15 +12,16 @@ export interface IngredientFormProps {
     line: number,
     removeCallback: (index: number) => void;
     confirmCallback: (ingredient: Ingredient) => void;
+    ingredient?: Ingredient;
 }
 
 const IngredientForm = forwardRef<IngredientFormHandle, IngredientFormProps>((props: IngredientFormProps, _ref) => {
     const { register, control, handleSubmit, getValues, formState: { errors }, reset } = useForm<Ingredient>({
         defaultValues: {
-            id: uuid(),
-            name: "",
-            amount: 0,
-            unit: ""
+            id: props.ingredient?.id ?? uuid(),
+            name: props.ingredient?.name ?? "",
+            amount: props.ingredient?.amount ?? undefined,
+            unit: props.ingredient?.unit ?? ""
         }
     });
     return (

@@ -132,20 +132,33 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
         />;
     }
 
-    function getIngredientsForm(index: number, ingredient?: Ingredient) {
+    function getIngredientsForm(index: number, ingredientChange?: Change<Ingredient>) {
         return (
             <div>
-                {index}
             <IngredientForm line={index}
+                            ingredient={ingredientChange?.content}
                             removeCallback={() => {
-                                setActiveIngredientFormIndex(-1)
+                                setActiveIngredientFormIndex(-1);
+                                setActiveIngredientEdit(false);
                             }}
                             confirmCallback={(ingredient) => {
-                                ingredients.splice(index, 0, new Change("Add", ingredient, index));
+                                if(activeIngredientEdit) {
+                                    if (ingredientChange?.changeType == "Noop") {
+                                        const line = ingredientChange.line;
+                                        const remove = new Change("Remove", ingredientChange.content, line);
+                                        ingredients.splice(index, 0, new Change("Add", ingredient, line));
+                                        ingredients.splice(index, 0, remove);
+                                    } else if(ingredientChange?.changeType == "Add") {
+                                        ingredients.splice(index - 1, 1, new Change("Add", ingredient, index));
+                                    }
+                                } else {
+                                    ingredients.splice(index, 0, new Change("Add", ingredient, index));
+                                }
                                 setIngredients([
                                     ...ingredients,
                                 ]);
                                 setActiveIngredientFormIndex(-1);
+                                setActiveIngredientEdit(false);
                             }}
             />
             </div>
@@ -172,34 +185,42 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
                 <FormRowContextButtons addCallback={editing ? undefined : () => setActiveIngredientFormIndex(0)}/>
                 {activeIngredientFormIndex == 0 && getIngredientsForm(0)}
                 {ingredients && ingredients.map(((ingredient, index) => (
-                    <div key={ingredient.content?.id}>
-                        <FormRowContextButtons addCallback={editType == "Edit" ? undefined : () => {setActiveIngredientFormIndex(index + 1)}}
-                                               editCallback={() => {setActiveIngredientFormIndex(index)}}
-                                               removeCallBack={editType == "Edit" ? undefined : () => {
-                                                   switch (ingredient.changeType as ChangeType) {
-                                                       case "Add":
-                                                       case "Remove":
-                                                           ingredients.splice(index, 1);
-                                                           setIngredients([...ingredients]);
-                                                           break;
-                                                       case "Replace":
-                                                       case "Noop":
-                                                           ingredients.splice(index, 1, new Change("Remove", ingredient.content, index));
-                                                           break;
-                                                   }
-                                               }}
-                        >
-                            <div className={"flex flex-row justify-between " + getChangeBackground(ingredient.changeType)}>
-                                <div>{ingredient.content?.name}</div>
-                                <div className={"flex flex-row gap-2"}>
-                                    <div>{ingredient.content?.amount}</div>
-                                    <div>{ingredient.content?.unit}</div>
+                    <div key={ingredient.changeType + ingredient.content?.id}>
+                        {!(activeIngredientFormIndex == index + 1 && activeIngredientEdit) && (
+                            <FormRowContextButtons addCallback={editType == "Edit" ? undefined : () => {
+                                                       setActiveIngredientEdit(false);
+                                                       setActiveIngredientFormIndex(index + 1)
+                                                   }}
+                                                   editCallback={() => {
+                                                       setActiveIngredientFormIndex(index + 1);
+                                                       setActiveIngredientEdit(true);
+                                                   }}
+                                                   removeCallBack={editType == "Edit" ? undefined : () => {
+                                                       switch (ingredient.changeType as ChangeType) {
+                                                           case "Add":
+                                                           case "Remove":
+                                                               ingredients.splice(index, 1);
+                                                               setIngredients([...ingredients]);
+                                                               break;
+                                                           case "Replace":
+                                                           case "Noop":
+                                                               ingredients.splice(index, 1, new Change("Remove", ingredient.content, index));
+                                                               break;
+                                                       }
+                                                   }}
+                            >
+                                <div className={"flex flex-row justify-between " + getChangeBackground(ingredient.changeType)}>
+                                    <div>{ingredient.content?.name}</div>
+                                    <div className={"flex flex-row gap-2"}>
+                                        <div>{ingredient.content?.amount}</div>
+                                        <div>{ingredient.content?.unit}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </FormRowContextButtons>
+                            </FormRowContextButtons>
+                        )}
                         {index + 1 == activeIngredientFormIndex && (
                             <div>
-                                {getIngredientsForm(index + 1)}
+                                {getIngredientsForm(index + 1, activeIngredientEdit ? ingredient : undefined)}
                             </div>
                         )}
                     </div>
