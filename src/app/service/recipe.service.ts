@@ -12,7 +12,14 @@ export class RecipeService {
         return RecipeNodeStore.addRecipeNode(recipeNode);
     }
 
-    static updateRecipeNode(recipeNode: RecipeNode) {
+    static async updateRecipeNode(recipeNode: RecipeNode) {
+        const nodeToUpdate = await RecipeService.getRecipeNodeFromId(recipeNode.id);
+        if (nodeToUpdate) {
+            nodeToUpdate.name = recipeNode.name;
+            nodeToUpdate.directions.items.push(...recipeNode.directions.items)
+            nodeToUpdate.ingredients.items.push(...recipeNode.ingredients.items)
+            return RecipeNodeStore.updateRecipeNode(nodeToUpdate);
+        }
         return RecipeNodeStore.updateRecipeNode(recipeNode);
     }
 

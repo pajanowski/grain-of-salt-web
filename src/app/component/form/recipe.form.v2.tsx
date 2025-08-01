@@ -113,8 +113,9 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
 
                                   if(activeDirectionEdit) {
                                       if (directionChange?.changeType == "Noop") {
-                                          const remove = new Change("Remove", directionChange.content, directionChange.line);
-                                          directions.splice(index, 0, new Change("Add", direction, index));
+                                          const line = directionChange.line;
+                                          const remove = new Change("Remove", directionChange.content, line);
+                                          directions.splice(index, 0, new Change("Add", direction, line));
                                           directions.splice(index, 0, remove);
                                       } else if(directionChange?.changeType == "Add") {
                                           directions.splice(index - 1, 1, new Change("Add", direction, index));

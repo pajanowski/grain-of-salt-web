@@ -7,7 +7,6 @@ import {Recipe} from "@/app/model/recipe";
 import {RecipeService} from "@/app/service/recipe.service";
 import DebugMenu from "@/app/component/debug.menu";
 import {useLiveQuery} from "dexie-react-hooks";
-import RecipeForm from "@/app/component/form/recipe.form";
 
 
 export default function Home() {
@@ -16,8 +15,10 @@ export default function Home() {
     const [parent, setParent] = useState<RecipeNode | undefined>(undefined);
     const [children, setChildren] = useState<RecipeNode[]>([]);
     const recipeListRef = useRef<RecipeListHandles>(null);
+    const rootRecipes = useLiveQuery(() => RecipeService.getRootRecipes());
+
     useMemo(() => {
-        if (recipeNode) {
+        if (recipeNode && rootRecipes) {
             RecipeService.getRecipeFromNodeId(recipeNode.id)
                 .then(setRecipe)
                 .catch(console.error);
@@ -32,9 +33,7 @@ export default function Home() {
                 })
                 .catch(console.error);
         }
-    }, [recipeNode])
-
-    const rootRecipes = useLiveQuery(() => RecipeService.getRootRecipes());
+    }, [recipeNode, rootRecipes])
 
     return (
         <>
