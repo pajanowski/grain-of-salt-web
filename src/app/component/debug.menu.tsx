@@ -16,7 +16,7 @@ const DebugMenu = () => {
             }}>Load data</button>
             <button onClick={() => {RecipeService.deleteAll()}}>Delete All</button>
             <button onClick={() => {recipeFormModal.current!.toggle()}}> Add New Recipe</button>
-            <RecipeFormModal ref={recipeFormModal}/>
+            <RecipeFormModal ref={recipeFormModal} editType={"Add"}/>
         </div>
 
     )

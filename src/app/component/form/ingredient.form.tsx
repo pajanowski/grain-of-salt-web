@@ -4,6 +4,7 @@ import {useForm} from "react-hook-form";
 import {Ingredient} from "@/app/model/ingredient";
 import {v4 as uuid} from "uuid";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IngredientFormHandle {
 
 }
@@ -48,7 +49,7 @@ const IngredientForm = forwardRef<IngredientFormHandle, IngredientFormProps>((pr
                 className="shadow appearance-none border rounded w-20 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
             <FormRowButtons index={props.line}
-                            removeCallback={props.removeCallback}
+                            removeCallback={() => props.removeCallback}
                             confirmCallback={() => {
                                 const values = getValues();
                                 props.confirmCallback(new Ingredient(

@@ -1,6 +1,6 @@
 import React, {forwardRef, useImperativeHandle, useCallback, useState} from 'react';
 import {useFieldArray, useForm} from 'react-hook-form';
-import {RecipeNode} from "@/app/model/recipe-node";
+import {NONE_PARENT_ID, RecipeNode} from "@/app/model/recipe-node";
 import {RecipeService} from "@/app/service/recipe.service";
 import {Ingredient} from "@/app/model/ingredient";
 import {ChangeList} from "@/app/model/change.list";
@@ -90,7 +90,7 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                 const values = getValues();
                 return new RecipeNode(
                     uuid(),
-                    null,
+                    NONE_PARENT_ID,
                     values.name,
                     values.ingredients,
                     values.directions
@@ -107,11 +107,11 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">Recipe Name</label>
-                <input 
-                    type="text" 
-                    placeholder="Recipe Name" 
+                <input
+                    type="text"
+                    placeholder="Recipe Name"
                     data-testid="recipe-name-input"
-                    {...register("name", {required: true})} 
+                    {...register("name", {required: true})}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
                 {errors.name && <span className="text-red-500 text-xs italic">Recipe name is required</span>}
@@ -120,8 +120,8 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
             <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="text-lg font-semibold" data-testid="ingredients-heading">Ingredients</h3>
-                    <button 
-                        type="button" 
+                    <button
+                        type="button"
                         onClick={addIngredient}
                         data-testid="add-ingredient-button"
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm"
@@ -133,16 +133,16 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                 {ingredientFields.fields.map((item, index) => (
                     <div key={item.id} className="flex flex-row gap-2 mb-2 items-center">
                         <div className="flex flex-col">
-                            <button 
-                                type="button" 
+                            <button
+                                type="button"
                                 onClick={() => moveIngredientUp(index)}
                                 data-testid={`ingredient-move-up-button-${index}`}
                                 className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-1 px-2 rounded-t text-sm"
                             >
                                 ↑
                             </button>
-                            <button 
-                                type="button" 
+                            <button
+                                type="button"
                                 onClick={() => moveIngredientDown(index)}
                                 data-testid={`ingredient-move-down-button-${index}`}
                                 className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-1 px-2 rounded-b text-sm"
@@ -160,8 +160,8 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
             <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="text-lg font-semibold" data-testid="directions-heading">Directions</h3>
-                    <button 
-                        type="button" 
+                    <button
+                        type="button"
                         onClick={addDirection}
                         data-testid="add-direction-button"
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm"
@@ -173,16 +173,16 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
                 {directionFields.fields.map((item, index) => (
                     <div key={item.id} className="flex flex-row gap-2 mb-2 items-start">
                         <div className="flex flex-col mt-2">
-                            <button 
-                                type="button" 
+                            <button
+                                type="button"
                                 onClick={() => moveDirectionUp(index)}
                                 data-testid={`direction-move-up-button-${index}`}
                                 className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-1 px-2 rounded-t text-sm"
                             >
                                 ↑
                             </button>
-                            <button 
-                                type="button" 
+                            <button
+                                type="button"
                                 onClick={() => moveDirectionDown(index)}
                                 data-testid={`direction-move-down-button-${index}`}
                                 className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-1 px-2 rounded-b text-sm"
@@ -193,17 +193,17 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
 
                         <div className="flex-grow">
                             <label className="block text-gray-700 text-sm font-bold mb-1">Step {index + 1}</label>
-                            <textarea 
-                                placeholder="Direction" 
+                            <textarea
+                                placeholder="Direction"
                                 data-testid={`direction-input-${index}`}
-                                {...register(`directions.items.${index}.content.content`, {required: true})} 
+                                {...register(`directions.items.${index}.content.content`, {required: true})}
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 rows={3}
                             />
                         </div>
 
-                        <button 
-                            type="button" 
+                        <button
+                            type="button"
                             onClick={() => directionFields.remove(index)}
                             data-testid={`direction-remove-button-${index}`}
                             className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-sm mt-6"
@@ -218,8 +218,8 @@ const RecipeForm = forwardRef<RecipeFormHandle, RecipeFormProps>((props, ref) =>
             </div>
 
             {props.onSubmit && (
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     data-testid="submit-recipe-button"
                     className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >

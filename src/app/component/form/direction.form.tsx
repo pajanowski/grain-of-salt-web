@@ -11,6 +11,7 @@ export interface DirectionFormProps {
     direction?: Direction
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface DirectionFormHandle {
 }
 
@@ -18,6 +19,7 @@ const DirectionForm = forwardRef<DirectionFormHandle, DirectionFormProps>((props
     const {register, getValues, formState: {errors}, reset} = useForm<Direction>({
         defaultValues: {
             id: props.direction?.id ?? uuid(),
+            // eslint-disable-next-line @typescript-eslint/no-empty-object-type
             content: props.direction?.content ?? ""
         }
     });
