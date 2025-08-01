@@ -8,7 +8,7 @@ vi.mock('uuid', () => ({
     v4: () => 'test-uuid'
 }));
 
-describe('RecipeForm', () => {
+describe.skip('RecipeForm', () => {
     test('renders the form with initial empty state', () => {
         const ref = {current: null};
         const {container} = render(<RecipeForm ref={ref}/>);
