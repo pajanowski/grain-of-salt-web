@@ -28,15 +28,17 @@ const DirectionForm = forwardRef<DirectionFormHandle, DirectionFormProps>((props
             <input
                 type="text"
                 placeholder="Directions"
-                // data-testid={`ingredient-name-input-${index}`}
+                data-testid={`direction-input-${props.line}`}
                 {...register(`content`, {required: true})}
                 className="shadow appearance-none border rounded flex-grow py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
-            <FormRowButtons index={props.line} removeCallback={() => props.removeCallback()}
+            <FormRowButtons index={props.line}
+                            removeCallback={() => props.removeCallback()}
                             confirmCallback={() => {
                                 props.confirmCallback(new Direction(getValues().content))
                                 reset();
                             }}
+                            testIdPrefix="direction"
                             valid={!errors.content}/>
         </div>
     )

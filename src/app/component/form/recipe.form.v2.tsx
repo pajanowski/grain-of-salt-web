@@ -181,35 +181,44 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
                     {errors.name && <span className="text-red-500 text-xs italic">Recipe name is required</span>}
                 </div>
 
-                <label className="block text-gray-700 text-sm font-bold mb-2">Ingredients</label>
-                <FormRowContextButtons addCallback={editing ? undefined : () => setActiveIngredientFormIndex(0)}/>
+                <label className="block text-gray-700 text-sm font-bold mb-2" data-testid="ingredients-section-label">Ingredients</label>
+                <FormRowContextButtons
+                    addCallback={editing ? undefined : () => setActiveIngredientFormIndex(0)}
+                    testId="ingredients-add-first"
+                />
                 {activeIngredientFormIndex == 0 && getIngredientsForm(0)}
                 {ingredients && ingredients.map(((ingredient, index) => (
-                    <div key={ingredient.changeType + ingredient.content?.id}>
+                    <div key={ingredient.changeType + ingredient.content?.id} data-testid={`ingredient-row-${index}`}>
                         {!(activeIngredientFormIndex == index + 1 && activeIngredientEdit) && (
-                            <FormRowContextButtons addCallback={editType == "Edit" ? undefined : () => {
-                                                       setActiveIngredientEdit(false);
-                                                       setActiveIngredientFormIndex(index + 1)
-                                                   }}
-                                                   editCallback={() => {
-                                                       setActiveIngredientFormIndex(index + 1);
-                                                       setActiveIngredientEdit(true);
-                                                   }}
-                                                   removeCallBack={editType == "Edit" ? undefined : () => {
-                                                       switch (ingredient.changeType as ChangeType) {
-                                                           case "Add":
-                                                           case "Remove":
-                                                               ingredients.splice(index, 1);
-                                                               setIngredients([...ingredients]);
-                                                               break;
-                                                           case "Replace":
-                                                           case "Noop":
-                                                               ingredients.splice(index, 1, new Change("Remove", ingredient.content, index));
-                                                               break;
-                                                       }
-                                                   }}
+                            <FormRowContextButtons
+                                addCallback={editType == "Edit" ? undefined : () => {
+                                    setActiveIngredientEdit(false);
+                                    setActiveIngredientFormIndex(index + 1)
+                                }}
+                                editCallback={() => {
+                                    setActiveIngredientFormIndex(index + 1);
+                                    setActiveIngredientEdit(true);
+                                }}
+                                removeCallBack={editType == "Edit" ? undefined : () => {
+                                    switch (ingredient.changeType as ChangeType) {
+                                        case "Add":
+                                        case "Remove":
+                                            ingredients.splice(index, 1);
+                                            setIngredients([...ingredients]);
+                                            break;
+                                        case "Replace":
+                                        case "Noop":
+                                            ingredients.splice(index, 1, new Change("Remove", ingredient.content, index));
+                                            break;
+                                    }
+                                }}
+                                testId={`ingredient-row-${index}`}
                             >
-                                <div className={"flex flex-row justify-between " + getChangeBackground(ingredient.changeType)}>
+                                <div
+                                    className={"flex flex-row justify-between " + getChangeBackground(ingredient.changeType)}
+                                    data-testid={`ingredient-content-${index}`}
+                                    data-change-type={ingredient.changeType}
+                                >
                                     <div>{ingredient.content?.name}</div>
                                     <div className={"flex flex-row gap-2"}>
                                         <div>{ingredient.content?.amount}</div>
@@ -228,37 +237,44 @@ const RecipeFormV2 = forwardRef<RecipeFormHandle, RecipeFormV2Props>((props: Rec
 
             </div>
             <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2">Directions</label>
-                <FormRowContextButtons addCallback={editing ? undefined : () => setActiveDirectionFormIndex(0)}/>
+                <label className="block text-gray-700 text-sm font-bold mb-2" data-testid="directions-section-label">Directions</label>
+                <FormRowContextButtons
+                    addCallback={editing ? undefined : () => setActiveDirectionFormIndex(0)}
+                    testId="directions-add-first"
+                />
                 {activeDirectionFormIndex == 0 && getDirectionForm(0)}
                 {directions && directions.map(((direction, index) => (
-                    <div key={direction.changeType + direction.content?.id}>
+                    <div key={direction.changeType + direction.content?.id} data-testid={`direction-row-${index}`}>
                         {!(activeDirectionFormIndex == index + 1 && activeDirectionEdit) && (
-                            <FormRowContextButtons addCallback={editing ? undefined : () => {
-                                                       setActiveDirectionEdit(false);
-                                                       setActiveDirectionFormIndex(index + 1)
-                                                   }}
-                                                   editCallback={() => {
-                                                       setActiveDirectionFormIndex(index + 1);
-                                                       setActiveDirectionEdit(true);
-                                                   }}
-                                                   removeCallBack={editing ? undefined : () => {
-                                                       console.log("")
-                                                       switch (direction.changeType as ChangeType) {
-                                                           case "Add":
-                                                           case "Remove":
-                                                               directions.splice(index, 1);
-                                                               setDirections([...directions]);
-                                                               break;
-                                                           case "Replace":
-                                                           case "Noop":
-                                                               directions.splice(index, 1, new Change("Remove", direction.content, index));
-                                                               break;
-                                                       }
-                                                   }}
+                            <FormRowContextButtons
+                                addCallback={editing ? undefined : () => {
+                                    setActiveDirectionEdit(false);
+                                    setActiveDirectionFormIndex(index + 1)
+                                }}
+                                editCallback={() => {
+                                    setActiveDirectionFormIndex(index + 1);
+                                    setActiveDirectionEdit(true);
+                                }}
+                                removeCallBack={editing ? undefined : () => {
+                                    console.log("")
+                                    switch (direction.changeType as ChangeType) {
+                                        case "Add":
+                                        case "Remove":
+                                            directions.splice(index, 1);
+                                            setDirections([...directions]);
+                                            break;
+                                        case "Replace":
+                                        case "Noop":
+                                            directions.splice(index, 1, new Change("Remove", direction.content, index));
+                                            break;
+                                    }
+                                }}
+                                testId={`direction-row-${index}`}
                             >
                                 <div
-                                     className={"flex flex-row justify-between " + getChangeBackground(direction.changeType)}
+                                    className={"flex flex-row justify-between " + getChangeBackground(direction.changeType)}
+                                    data-testid={`direction-content-${index}`}
+                                    data-change-type={direction.changeType}
                                 >
                                     {direction.content?.content}
                                 </div>

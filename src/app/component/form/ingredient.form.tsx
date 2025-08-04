@@ -30,21 +30,21 @@ const IngredientForm = forwardRef<IngredientFormHandle, IngredientFormProps>((pr
             <input
                 type="text"
                 placeholder="Name"
-                // data-testid={`ingredient-name-input-${index}`}
+                data-testid={`ingredient-name-input-${props.line}`}
                 {...register(`name`, {required: true})}
                 className="shadow appearance-none border rounded flex-grow py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
             <input
                 type="number"
                 placeholder="Amount"
-                // data-testid={`ingredient-amount-input-${index}`}
+                data-testid={`ingredient-amount-input-${props.line}`}
                 {...register(`amount`, {required: true, valueAsNumber: true})}
                 className="shadow appearance-none border rounded w-20 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
             <input
                 type="text"
                 placeholder="Unit"
-                // data-testid={`ingredient-unit-input-${index}`}
+                data-testid={`ingredient-unit-input-${props.line}`}
                 {...register(`unit`, {required: true})}
                 className="shadow appearance-none border rounded w-20 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
@@ -59,6 +59,7 @@ const IngredientForm = forwardRef<IngredientFormHandle, IngredientFormProps>((pr
                                 ));
                                 reset()
                             }}
+                            testIdPrefix="ingredient"
                             valid={!errors.unit && !errors.name && !errors.amount}/>
         </div>
     )
