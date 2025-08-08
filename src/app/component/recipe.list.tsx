@@ -1,5 +1,6 @@
 import {forwardRef} from "react";
 import {RecipeNode} from "@/app/model/recipe-node";
+import Link from "next/link";
 
 interface RecipeListProps {
     className?: string;
@@ -21,8 +22,18 @@ export interface RecipeListHandles {
 const RecipeListRow = (props: RecipeListRowProps) => {
     const recipeNode = props.recipeNode;
    return (
-       <div onClick={() => props.recipeSelected(recipeNode)}>
-           {recipeNode.name}
+       <div
+           onClick={() => props.recipeSelected(recipeNode)}
+           className="flex items-center hover:bg-gray-400 p-2 cursor-pointer"
+       >
+           <span>{recipeNode.name}</span>
+           <Link
+               href={`/recipe/${recipeNode.id}`}
+               className="ml-2 text-blue-500 text-sm hover:underline"
+               onClick={(e) => e.stopPropagation()}
+           >
+               View
+           </Link>
        </div>
    )
 }

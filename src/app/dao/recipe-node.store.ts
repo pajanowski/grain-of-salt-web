@@ -18,6 +18,17 @@ export class RecipeNodeStore {
         return recipeNodesDb.recipeNodes.where({parentId: NONE_PARENT_ID}).toArray();
     }
 
+    static searchRecipesByName(searchTerm: string): Promise<Array<RecipeNode>> {
+        if (!searchTerm || searchTerm.trim() === '') {
+            return this.getRootRecipes();
+        }
+
+        const lowerSearchTerm = searchTerm.toLowerCase();
+        return recipeNodesDb.recipeNodes
+            .filter(recipe => recipe.name.toLowerCase().includes(lowerSearchTerm))
+            .toArray();
+    }
+
     static addRecipeNode(recipeNode: RecipeNode): Promise<string> {
         return recipeNodesDb.recipeNodes.add(recipeNode);
     }

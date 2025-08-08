@@ -7,6 +7,8 @@ import {Recipe} from "@/app/model/recipe";
 import {RecipeService} from "@/app/service/recipe.service";
 import DebugMenu from "@/app/component/debug.menu";
 import {useLiveQuery} from "dexie-react-hooks";
+import RecipeSearch from "@/app/component/recipe.search";
+import Link from "next/link";
 
 
 export default function Home() {
@@ -38,6 +40,15 @@ export default function Home() {
     return (
         <>
             <DebugMenu/>
+            <div className="flex justify-between items-center mb-4">
+                <RecipeSearch onSelectRecipe={setRecipeNode} className="flex-grow mr-4"/>
+                <Link
+                    href="/recipe-tree"
+                    className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded flex items-center"
+                >
+                    View Recipe Tree
+                </Link>
+            </div>
             <div className={"flex flex-row w-full bg-gray-200"}>
                 <RecipeList className={"w-xs"} ref={recipeListRef}
                             recipeSelected={setRecipeNode}
