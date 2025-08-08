@@ -3,6 +3,7 @@ import {RecipeNode} from '@/app/model/recipe-node';
 import {RecipeService} from '@/app/service/recipe.service';
 import Link from 'next/link';
 import {ChevronDownIcon, ChevronRightIcon} from '@heroicons/react/24/solid';
+import {useLiveQuery} from "dexie-react-hooks";
 
 /**
  * RecipeTreeView Component
@@ -169,7 +170,7 @@ const RecipeTreeView = ({
     const [error, setError] = useState<string | null>(null);
 
     // Load root recipes on component mount
-    useEffect(() => {
+    useLiveQuery(() => {
         const loadRecipes = async () => {
             try {
                 setIsLoading(true);
