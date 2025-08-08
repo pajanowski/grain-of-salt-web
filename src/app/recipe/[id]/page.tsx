@@ -1,4 +1,6 @@
 'use client'
+// for cloudflare
+export const runtime = 'edge'
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
