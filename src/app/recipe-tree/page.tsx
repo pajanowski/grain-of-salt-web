@@ -1,19 +1,12 @@
 'use client'
 
-import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import RecipeTreeView from '@/app/component/recipe.tree.view';
+import {Suspense, useState } from 'react';
 import { RecipeNode } from '@/app/model/recipe-node';
 import Link from 'next/link';
+import RecipeTreeViewBySearchParam from "@/app/component/search-param.recipe.tree";
 
 export default function RecipeTreePage() {
-  const searchParams = useSearchParams();
-  const rootId = searchParams.get('rootId');
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeNode | undefined>(undefined);
-
-  const handleSelectRecipe = (recipe: RecipeNode) => {
-    setSelectedRecipe(recipe);
-  };
 
   return (
     <div className="container mx-auto p-4">
@@ -27,12 +20,9 @@ export default function RecipeTreePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2">
-          <RecipeTreeView
-            rootRecipeId={rootId || undefined}
-            selectedRecipeId={selectedRecipe?.id}
-            onSelectRecipe={handleSelectRecipe}
-            className="bg-white p-4 rounded-lg shadow-md"
-          />
+            <Suspense fallback={null}>
+                <RecipeTreeViewBySearchParam/>
+            </Suspense>
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow-md">
