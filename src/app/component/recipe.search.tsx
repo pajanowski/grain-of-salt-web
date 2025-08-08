@@ -56,8 +56,8 @@ const RecipeSearch = (props: RecipeSearchProps) => {
             props.onSelectRecipe(recipe);
         }
 
-        // Navigate to the recipe page
-        router.push(`/recipe/${recipe.id}`);
+        // Navigate to the recipe page using query parameters
+        router.push(`/recipe?id=${recipe.id}`);
     };
 
     return (

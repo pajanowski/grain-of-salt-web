@@ -28,7 +28,7 @@ const RecipeListRow = (props: RecipeListRowProps) => {
        >
            <span className="truncate mr-2">{recipeNode.name}</span>
            <Link
-               href={`/recipe/${recipeNode.id}`}
+               href={`/recipe?id=${recipeNode.id}`}
                className="ml-auto text-blue-500 text-sm hover:underline whitespace-nowrap"
                onClick={(e) => e.stopPropagation()}
            >

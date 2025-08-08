@@ -1,8 +1,6 @@
 'use client'
-// for cloudflare
-export const runtime = 'edge'
 
-import { useParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Recipe } from '@/app/model/recipe';
 import {NONE_PARENT_ID, RecipeNode} from '@/app/model/recipe-node';
@@ -12,8 +10,8 @@ import RecipeTreeView from '@/app/component/recipe.tree.view';
 import Link from 'next/link';
 
 export default function RecipePage() {
-  const params = useParams();
-  const recipeId = params.id as string;
+  const searchParams = useSearchParams();
+  const recipeId = searchParams.get('id');
   const [recipe, setRecipe] = useState<Recipe | undefined>(undefined);
   const [recipeNode, setRecipeNode] = useState<RecipeNode | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,11 +23,11 @@ export default function RecipePage() {
         setLoading(true);
 
         // Fetch the recipe data
-        const recipeData = await RecipeService.getRecipeFromNodeId(recipeId);
+        const recipeData = await RecipeService.getRecipeFromNodeId(recipeId!);
         setRecipe(recipeData);
 
         // Fetch the recipe node data for the tree view
-        const nodeData = await RecipeService.getRecipeNodeFromId(recipeId);
+        const nodeData = await RecipeService.getRecipeNodeFromId(recipeId!);
         setRecipeNode(nodeData);
 
         setError(null);
@@ -43,6 +41,9 @@ export default function RecipePage() {
 
     if (recipeId) {
       loadRecipe();
+    } else {
+      setError('No recipe ID provided');
+      setLoading(false);
     }
   }, [recipeId]);
 
@@ -77,6 +78,7 @@ export default function RecipePage() {
               <RecipeTreeView
                 rootRecipeId={recipeNode.parentId != NONE_PARENT_ID ? recipeNode.parentId : recipeNode.id}
                 selectedRecipeId={recipeNode.id}
+                showParentOfSelected={true}
                 className="max-h-[500px] overflow-auto"
               />
             )}

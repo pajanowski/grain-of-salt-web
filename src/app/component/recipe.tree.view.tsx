@@ -129,7 +129,7 @@ const RecipeTreeNode = ({
 
                 {/* Link to recipe page */}
                 <Link
-                    href={`/recipe/${recipe.id}`}
+                    href={`/recipe?id=${recipe.id}`}
                     className="ml-2 text-blue-500 text-sm hover:underline"
                     onClick={(e) => e.stopPropagation()}
                 >
