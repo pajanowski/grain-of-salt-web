@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Recipe } from '@/app/model/recipe';
-import { RecipeNode } from '@/app/model/recipe-node';
+import {NONE_PARENT_ID, RecipeNode} from '@/app/model/recipe-node';
 import { RecipeService } from '@/app/service/recipe.service';
 import RecipeCard from '@/app/component/recipe.card';
 import RecipeTreeView from '@/app/component/recipe.tree.view';
@@ -71,10 +71,9 @@ export default function RecipePage() {
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">Recipe Hierarchy</h2>
             {recipeNode && (
               <RecipeTreeView
-                rootRecipeId={recipeNode.id}
+                rootRecipeId={recipeNode.parentId != NONE_PARENT_ID ? recipeNode.parentId : recipeNode.id}
                 selectedRecipeId={recipeNode.id}
                 className="max-h-[500px] overflow-auto"
               />

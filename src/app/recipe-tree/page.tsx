@@ -43,17 +43,17 @@ export default function RecipeTreePage() {
               <p className="text-gray-600 mt-2">ID: {selectedRecipe.id}</p>
               <p className="text-gray-600">Parent ID: {selectedRecipe.parentId}</p>
 
-              <div className="mt-4 flex justify-between">
+              <div className="mt-4 flex flex-col sm:flex-row gap-2">
                 <Link
                   href={`/recipe/${selectedRecipe.id}`}
-                  className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                  className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded text-center"
                 >
                   View Recipe
                 </Link>
 
                 <Link
                   href={`/recipe-tree?rootId=${selectedRecipe.id}`}
-                  className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+                  className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded text-center sm:ml-auto"
                 >
                   Focus Tree
                 </Link>

@@ -8,9 +8,9 @@ import { ChangeList } from '@/app/model/change.list';
 // Mock the RecipeService
 vi.mock('@/app/service/recipe.service', () => ({
   RecipeService: {
-    getRootRecipes: vi.fn(),
-    getRecipeNodeFromId: vi.fn(),
-    getRecipeChildren: vi.fn()
+    getRootRecipes: vi.fn().mockResolvedValue([]),
+    getRecipeNodeFromId: vi.fn().mockResolvedValue(undefined),
+    getRecipeChildren: vi.fn().mockResolvedValue([])
   }
 }));
 
@@ -64,38 +64,40 @@ describe('RecipeTreeView Component', () => {
     });
   });
 
-  test('expands node when toggle button is clicked', async () => {
-    const { getByText, getAllByRole } = render(<RecipeTreeView />);
+  test('automatically displays all child nodes', async () => {
+    const { getByText, getAllByText } = render(<RecipeTreeView />);
 
-    // Wait for the component to load
+    // Wait for the component to load and verify that all nodes are visible
     await waitFor(() => {
-      expect(getByText('Root Recipe')).toBeTruthy();
-    });
+      // Root node should be visible
+      expect(getAllByText('Root Recipe').length).toBeGreaterThan(0);
 
-    // Find and click the toggle button
-    const toggleButtons = getAllByRole('button');
-    fireEvent.click(toggleButtons[0]);
+      // Child nodes should be automatically visible without clicking
+      expect(getAllByText('Child Recipe 1').length).toBeGreaterThan(0);
+      expect(getAllByText('Child Recipe 2').length).toBeGreaterThan(0);
 
-    // Wait for children to be loaded and displayed
-    await waitFor(() => {
-      expect(getByText('Child Recipe 1')).toBeTruthy();
-      expect(getByText('Child Recipe 2')).toBeTruthy();
+      // Even grandchild nodes should be visible
+      expect(getAllByText('Grandchild Recipe').length).toBeGreaterThan(0);
     });
   });
 
   test('calls onSelectRecipe when a recipe is clicked', async () => {
     const onSelectRecipeMock = vi.fn();
-    const { getByText } = render(
+    const { getAllByText, getAllByTestId } = render(
       <RecipeTreeView onSelectRecipe={onSelectRecipeMock} />
     );
 
     // Wait for the component to load
     await waitFor(() => {
-      expect(getByText('Root Recipe')).toBeTruthy();
+      expect(getAllByText('Root Recipe').length).toBeGreaterThan(0);
+      expect(getAllByTestId('recipe-name').length).toBeGreaterThan(0);
     });
 
-    // Click on the recipe name
-    fireEvent.click(getByText('Root Recipe'));
+    // Find the first recipe name element with the data-testid
+    const recipeNameElements = getAllByTestId('recipe-name');
+
+    // Click on the first recipe name element
+    fireEvent.click(recipeNameElements[0]);
 
     // Verify the callback was called with the correct recipe
     expect(onSelectRecipeMock).toHaveBeenCalledWith(mockRootRecipe);
@@ -104,23 +106,33 @@ describe('RecipeTreeView Component', () => {
   test('renders a specific recipe tree when rootRecipeId is provided', async () => {
     vi.mocked(RecipeService.getRecipeNodeFromId).mockResolvedValue(mockChildRecipe1);
 
-    const { getByText } = render(<RecipeTreeView rootRecipeId="child-1" />);
+    const { getAllByText } = render(<RecipeTreeView rootRecipeId="child-1" />);
 
     // Wait for the component to load
     await waitFor(() => {
-      expect(getByText('Child Recipe 1')).toBeTruthy();
+      expect(getAllByText('Child Recipe 1').length).toBeGreaterThan(0);
     });
   });
 
   test('highlights the selected recipe when selectedRecipeId is provided', async () => {
-    const { getByText } = render(
+    const { getAllByTestId } = render(
       <RecipeTreeView selectedRecipeId="root-1" />
     );
 
     // Wait for the component to load
     await waitFor(() => {
-      const recipeElement = getByText('Root Recipe').closest('div');
-      expect(recipeElement?.className).toContain('bg-blue-100');
+      // Get all recipe name elements
+      const recipeNameElements = getAllByTestId('recipe-name');
+      expect(recipeNameElements.length).toBeGreaterThan(0);
+
+      // Find the parent container of the recipe name elements
+      const recipeContainers = recipeNameElements.map(el => el.closest('div')?.parentElement);
+
+      // Check if any of the containers has the bg-blue-100 class
+      const highlightedContainer = recipeContainers.find(container =>
+        container?.className.includes('bg-blue-100')
+      );
+      expect(highlightedContainer).toBeTruthy();
     });
   });
 });

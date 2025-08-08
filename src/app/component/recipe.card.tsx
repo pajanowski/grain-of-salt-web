@@ -5,6 +5,7 @@ import RecipeFormModal, {RecipeFormModalHandle} from "@/app/component/recipe.for
 
 interface RecipeCardProps {
     recipe: Recipe;
+    className?: string;
 }
 
 interface ListItemsProps {
@@ -20,14 +21,16 @@ const ListItems = (props: ListItemsProps) => {
     const title = props.title;
     const children = props.children;
     return (
-        <div className={"flex flex-col gap-1 bg-gray-300"}>
-            <div>{title}</div>
+        <div className={"flex flex-col gap-1 bg-gray-300 p-3 rounded"}>
+            <div className="text-md font-medium mb-2">{title}</div>
             {children && Children.count(children)> 0 &&
-                children
+                <div className="space-y-2">
+                    {children}
+                </div>
             }
             {
                 !children || Children.count(children) === 0 &&
-                <div>No {title}</div>
+                <div className="text-gray-500 italic">No {title}</div>
             }
         </div>
     )
@@ -40,43 +43,51 @@ const RecipeCard = forwardRef<RecipeCardHandle, RecipeCardProps>((props: RecipeC
     const [editType, setEditType] = useState("Edit");
 
     return (
-        <div className={"flex flex-col gap-2"}>
+        <div className={`flex flex-col gap-2 ${props.className || ''}`}>
             <RecipeFormModal recipe={recipe} ref={modalRef} editType={editType}/>
-            <div className={"flex flex-row justify-between"}>
-                {recipe.name}
-                <button onClick={() => {
-                    setEditType("Edit")
-                    modalRef.current!.toggle()
-                }}>
-                    <PencilIcon className={"size-6"}/>
-                </button>
-                <button onClick={() => {
-                    setEditType("Fork")
-                    modalRef.current!.toggle()
-                }}>
-                    <ArrowRightStartOnRectangleIcon className={"size-6"}/>
-                </button>
+            <div className={"flex flex-row justify-between items-center flex-wrap"}>
+                <div className="text-lg font-semibold mr-2">{recipe.name}</div>
+                <div className="flex space-x-2">
+                    <button
+                        onClick={() => {
+                            setEditType("Edit")
+                            modalRef.current!.toggle()
+                        }}
+                        className="p-1 hover:bg-gray-200 rounded"
+                    >
+                        <PencilIcon className={"size-6"}/>
+                    </button>
+                    <button
+                        onClick={() => {
+                            setEditType("Fork")
+                            modalRef.current!.toggle()
+                        }}
+                        className="p-1 hover:bg-gray-200 rounded"
+                    >
+                        <ArrowRightStartOnRectangleIcon className={"size-6"}/>
+                    </button>
+                </div>
             </div>
             <ListItems title={"Ingredients"}>
                 {recipe.ingredients.map((ingredient) => (
-                    <div key={ingredient.id} className="flex flex-row justify-between">
-                        <div>{ingredient.name}</div>
-                        <div className="flex flex-row gap-1">
+                    <div key={ingredient.id} className="flex flex-col sm:flex-row justify-between">
+                        <div className="font-medium">{ingredient.name}</div>
+                        <div className="flex flex-row gap-1 text-gray-700">
                             <div>{ingredient.amount}</div>
                             <div>{ingredient.unit}</div>
                         </div>
-
                     </div>
                 ))}
-
             </ListItems>
             <ListItems title={"Directions"}>
-                {recipe.directions.map((direction) => (
-                    <div key={direction.id}>
-                        {direction.content}
+                {recipe.directions.map((direction, index) => (
+                    <div key={direction.id} className="pb-2">
+                        <div className="flex">
+                            <span className="font-medium mr-2">{index + 1}.</span>
+                            <span>{direction.content}</span>
+                        </div>
                     </div>
                 ))}
-
             </ListItems>
         </div>
     )

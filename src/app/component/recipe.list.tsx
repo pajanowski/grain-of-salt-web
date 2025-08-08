@@ -24,12 +24,12 @@ const RecipeListRow = (props: RecipeListRowProps) => {
    return (
        <div
            onClick={() => props.recipeSelected(recipeNode)}
-           className="flex items-center hover:bg-gray-400 p-2 cursor-pointer"
+           className="flex items-center justify-between hover:bg-gray-400 p-2 cursor-pointer"
        >
-           <span>{recipeNode.name}</span>
+           <span className="truncate mr-2">{recipeNode.name}</span>
            <Link
                href={`/recipe/${recipeNode.id}`}
-               className="ml-2 text-blue-500 text-sm hover:underline"
+               className="ml-auto text-blue-500 text-sm hover:underline whitespace-nowrap"
                onClick={(e) => e.stopPropagation()}
            >
                View
@@ -47,9 +47,11 @@ const RecipeList = forwardRef<RecipeListHandles, RecipeListProps>((props: Recipe
     return (
         <div className={`bg-gray-300 h-full ${props.className}`}>
             {parentNode && (
-                <div className="flex flex-row gap-1">
-                    <div>Parent: </div>
-                    <RecipeListRow recipeNode={parentNode} recipeSelected={() => props.recipeSelected(parentNode)}/>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center p-2 border-b border-gray-400">
+                    <div className="font-medium text-sm mb-1 sm:mb-0 sm:mr-2">Parent:</div>
+                    <div className="w-full">
+                        <RecipeListRow recipeNode={parentNode} recipeSelected={() => props.recipeSelected(parentNode)}/>
+                    </div>
                 </div>
             )}
             {childrenNodes.length > 0 && childrenNodes.map((recipe) => {

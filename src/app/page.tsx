@@ -9,6 +9,8 @@ import DebugMenu from "@/app/component/debug.menu";
 import {useLiveQuery} from "dexie-react-hooks";
 import RecipeSearch from "@/app/component/recipe.search";
 import Link from "next/link";
+import RecipeTreeView from "@/app/component/recipe.tree.view";
+import {useSearchParams} from "next/navigation";
 
 
 export default function Home() {
@@ -18,6 +20,13 @@ export default function Home() {
     const [children, setChildren] = useState<RecipeNode[]>([]);
     const recipeListRef = useRef<RecipeListHandles>(null);
     const rootRecipes = useLiveQuery(() => RecipeService.getRootRecipes());
+    const searchParams = useSearchParams();
+    const rootId = searchParams.get('rootId');
+    const [selectedRecipe, setSelectedRecipe] = useState<RecipeNode | undefined>(undefined);
+
+    const handleSelectRecipe = (recipe: RecipeNode) => {
+        setSelectedRecipe(recipe);
+    };
 
     useMemo(() => {
         if (recipeNode && rootRecipes) {
@@ -40,27 +49,15 @@ export default function Home() {
     return (
         <>
             <DebugMenu/>
-            <div className="flex justify-between items-center mb-4">
-                <RecipeSearch onSelectRecipe={setRecipeNode} className="flex-grow mr-4"/>
-                <Link
-                    href="/recipe-tree"
-                    className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded flex items-center"
-                >
-                    View Recipe Tree
-                </Link>
+            <div className="flex justify-between items-center m-4">
+                <RecipeSearch onSelectRecipe={setRecipeNode} className="flex-grow"/>
             </div>
-            <div className={"flex flex-row w-full bg-gray-200"}>
-                <RecipeList className={"w-xs"} ref={recipeListRef}
-                            recipeSelected={setRecipeNode}
-                            childrenNodes={rootRecipes}
-                />
-                {children &&
-                    <RecipeList recipeSelected={setRecipeNode} parent={parent} childrenNodes={children} />
-                }
-                {recipe &&
-                    <RecipeCard recipe={recipe}/>
-                }
-            </div>
+            <RecipeTreeView
+                rootRecipeId={rootId || undefined}
+                selectedRecipeId={selectedRecipe?.id}
+                onSelectRecipe={handleSelectRecipe}
+                className="bg-white p-4 rounded-lg shadow-md"
+            />
         </>
     );
 }

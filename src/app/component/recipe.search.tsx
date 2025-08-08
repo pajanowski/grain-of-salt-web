@@ -77,25 +77,27 @@ const RecipeSearch = (props: RecipeSearchProps) => {
                 />
             </div>
 
-            <div className="mt-2">
-                <h3 className="text-lg font-semibold mb-2">Results</h3>
-                {recipes.length === 0 ? (
-                    <p className="text-gray-500">No recipes found</p>
-                ) : (
-                    <ul className="divide-y divide-gray-200">
-                        {recipes.map((recipe) => (
-                            <li
-                                key={recipe.id}
-                                className="py-2 px-4 hover:bg-gray-100 cursor-pointer"
-                                onClick={() => handleSelectRecipe(recipe)}
-                                data-testid={`recipe-result-${recipe.id}`}
-                            >
-                                <div className="font-medium">{recipe.name}</div>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
+            {searchTerm.length > 0 && (
+                <div className="mt-2">
+                    <h3 className="text-lg font-semibold mb-2">Results</h3>
+                    {recipes.length === 0 ? (
+                        <p className="text-gray-500">No recipes found</p>
+                    ) : (
+                        <ul className="divide-y divide-gray-200">
+                            {recipes.map((recipe) => (
+                                <li
+                                    key={recipe.id}
+                                    className="py-2 px-4 hover:bg-gray-100 cursor-pointer"
+                                    onClick={() => handleSelectRecipe(recipe)}
+                                    data-testid={`recipe-result-${recipe.id}`}
+                                >
+                                    <div className="font-medium">{recipe.name}</div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            )}
         </div>
     );
 };
