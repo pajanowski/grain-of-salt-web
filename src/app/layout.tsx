@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import {RecipeService} from "@/app/service/recipe.service";
 import {NEAPOLITAN, NY_STYLE, PAPA_JOHNS} from "@/app/static-data.pizza";
-import {useMemo} from "react";
+import {Suspense, useMemo} from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +33,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Suspense fallback={null}>
+            {children}
+        </Suspense>
       </body>
     </html>
   );

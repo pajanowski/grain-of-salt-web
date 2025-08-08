@@ -78,7 +78,6 @@ export default function RecipePage() {
               <RecipeTreeView
                 rootRecipeId={recipeNode.parentId != NONE_PARENT_ID ? recipeNode.parentId : recipeNode.id}
                 selectedRecipeId={recipeNode.id}
-                showParentOfSelected={true}
                 className="max-h-[500px] overflow-auto"
               />
             )}

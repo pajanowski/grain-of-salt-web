@@ -139,7 +139,7 @@ const RecipeTreeNode = ({
 
             {/* Children nodes (always visible) */}
             <div className="children-container">
-                {children.length > 0 ? (
+                {children.length > 0 && (
                     children.map(child => (
                         <RecipeTreeNode
                             key={child.id}
@@ -149,15 +149,6 @@ const RecipeTreeNode = ({
                             onSelectRecipe={onSelectRecipe}
                         />
                     ))
-                ) : (
-                    !isLoading && (
-                        <div
-                            className="text-gray-500 text-sm italic pl-4"
-                            style={{paddingLeft: `${(level + 1) * 1}rem`}}
-                        >
-                            No child recipes
-                        </div>
-                    )
                 )}
             </div>
         </div>
