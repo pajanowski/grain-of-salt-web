@@ -32,7 +32,7 @@ interface RecipeTreeViewProps {
      * The ID of the root recipe to start the tree visualization from.
      * If not provided, all root recipes will be shown.
      */
-    rootRecipeId?: string;
+    rootRecipeId: string;
 
     /**
      * The ID of the currently selected recipe (to highlight in the tree).
@@ -77,16 +77,10 @@ const RecipeTreeNode = ({
     // Always load children on mount
     useEffect(() => {
         const loadChildren = async () => {
-            try {
-                setIsLoading(true);
-                // Safely call getRecipeChildren and handle potential undefined return values
-                const childNodes = await RecipeService.getRecipeChildren?.(recipe.id) || [];
-                setChildren(childNodes)
-            } catch (error) {
-                console.error('Error loading recipe children:', error);
-            } finally {
-                setIsLoading(false);
-            }
+            setIsLoading(true);
+            // Safely call getRecipeChildren and handle potential undefined return values
+            const childNodes = await RecipeService.getRecipeChildren?.(recipe.id) || [];
+            setChildren(childNodes)
         };
 
         loadChildren();
@@ -166,40 +160,19 @@ const RecipeTreeView = ({
                             className = '',
                         }: RecipeTreeViewProps) => {
     const [rootRecipes, setRootRecipes] = useState<RecipeNode[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [rootRecipesLoading, setRootRecipesLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    // Load root recipes on component mount
     useLiveQuery(() => {
-        const loadRecipes = async () => {
-            try {
-                setIsLoading(true);
-
-                if (rootRecipeId) {
-                    // If a specific root recipe ID is provided, fetch just that recipe
-                    const recipe = await RecipeService.getRecipeNodeFromId?.(rootRecipeId);
-                    if (recipe) {
-                        setRootRecipes([recipe]);
-                    } else {
-                        setError(`Recipe with ID ${rootRecipeId} not found`);
-                    }
-                } else {
-                    // Otherwise, fetch all root recipes
-                    const recipes = await RecipeService.getRootRecipes?.() || [];
-                    setRootRecipes(recipes);
-                }
-            } catch (err) {
-                console.error('Error loading recipes:', err);
-                setError('Failed to load recipes');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        loadRecipes();
+        const loadRootRecipes = async () => {
+            setRootRecipesLoading(true);
+            const rootRecipes = await RecipeService.getRootRecipes() || [];
+            setRootRecipes(rootRecipes);
+            setRootRecipesLoading(false);
+        }
+        loadRootRecipes();
     }, [rootRecipeId]);
 
-    if (isLoading) {
+    if (rootRecipesLoading) {
         return (
             <div className={`recipe-tree-loading ${className}`}>
                 <div className="flex justify-center items-center p-4">

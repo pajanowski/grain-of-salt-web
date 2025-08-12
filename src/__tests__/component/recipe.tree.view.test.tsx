@@ -51,12 +51,12 @@ describe('RecipeTreeView Component', () => {
   });
 
   test('renders loading state initially', () => {
-    const { getByText } = render(<RecipeTreeView />);
+    const { getByText } = render(<RecipeTreeView rootRecipeId={""} />);
     expect(getByText('Loading recipe tree...')).toBeTruthy();
   });
 
   test('renders root recipes when loaded', async () => {
-    const { getByText } = render(<RecipeTreeView />);
+    const { getByText } = render(<RecipeTreeView rootRecipeId={""} />);
 
     await waitFor(() => {
       expect(getByText('Recipe Hierarchy')).toBeTruthy();
@@ -65,7 +65,7 @@ describe('RecipeTreeView Component', () => {
   });
 
   test('automatically displays all child nodes', async () => {
-    const { getByText, getAllByText } = render(<RecipeTreeView />);
+    const { getByText, getAllByText } = render(<RecipeTreeView rootRecipeId={""} />);
 
     // Wait for the component to load and verify that all nodes are visible
     await waitFor(() => {
@@ -84,7 +84,7 @@ describe('RecipeTreeView Component', () => {
   test.skip('calls onSelectRecipe when a recipe is clicked', async () => {
     const onSelectRecipeMock = vi.fn();
     const { getAllByText, getAllByTestId } = render(
-      <RecipeTreeView onSelectRecipe={onSelectRecipeMock} />
+      <RecipeTreeView onSelectRecipe={onSelectRecipeMock} rootRecipeId={""} />
     );
 
     // Wait for the component to load

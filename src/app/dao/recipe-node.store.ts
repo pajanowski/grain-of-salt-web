@@ -42,7 +42,10 @@ export class RecipeNodeStore {
     }
 
     static getRecipeNodeById(id: string): Promise<RecipeNode | undefined> {
-        return recipeNodesDb.recipeNodes.get(id);
+        if (id) {
+            return recipeNodesDb.recipeNodes.get(id);
+        }
+        return Promise.resolve(undefined);
     }
 
     static async getRecipeAncestors(id: string): Promise<RecipeNode[]> {

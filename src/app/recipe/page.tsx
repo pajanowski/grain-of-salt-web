@@ -8,6 +8,7 @@ import { RecipeService } from '@/app/service/recipe.service';
 import RecipeCard from '@/app/component/recipe.card';
 import RecipeTreeView from '@/app/component/recipe.tree.view';
 import Link from 'next/link';
+import {useLiveQuery} from "dexie-react-hooks";
 
 export default function RecipePage() {
   const searchParams = useSearchParams();
@@ -17,7 +18,7 @@ export default function RecipePage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  useLiveQuery(() => {
     async function loadRecipe() {
       try {
         setLoading(true);
